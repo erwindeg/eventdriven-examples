@@ -1,4 +1,5 @@
 rootProject.name = 'eventdriven-examples'
 include 'core-api',
         'version',
-        'rest-facade'
+        'rest-facade',
+        'monolith'

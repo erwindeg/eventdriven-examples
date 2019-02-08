@@ -1,0 +1,16 @@
+apply plugin: 'java'
+apply plugin: 'org.springframework.boot'
+apply from: '../gradle/docker.gradle'
+
+sourceCompatibility = javaSource
+targetCompatibility = javaTarget
+
+
+
+dependencies {
+    compile project(':version')
+    compile project(':rest-facade')
+    compile libraries.springBoot
+    compile libraries.axonServer
+    compile libraries.axon
+}
