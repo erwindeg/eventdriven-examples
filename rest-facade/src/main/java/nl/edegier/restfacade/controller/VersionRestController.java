@@ -6,6 +6,7 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
@@ -21,9 +22,9 @@ public class VersionRestController {
     @RequestMapping(value = "/version",
             produces = {"application/json;charset=UTF-8"},
             method = RequestMethod.GET)
-    public String getVersion() {
+    public Mono<String> getVersion() {
         this.commandGateway.send(new CreateVersionCommand(UUID.randomUUID().toString()));
 
-        return "initial version";
+        return Mono.just("initial version");
     }
 }

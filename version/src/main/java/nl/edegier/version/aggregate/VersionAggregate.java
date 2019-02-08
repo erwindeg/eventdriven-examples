@@ -1,4 +1,4 @@
-package nl.edegier.restfacade.aggregate;
+package nl.edegier.version.aggregate;
 
 import nl.edegier.coreapi.CreateVersionCommand;
 import nl.edegier.coreapi.VersionCreatedEvent;
