@@ -8,6 +8,8 @@ targetCompatibility = javaTarget
 
 
 dependencies {
+    compile project(':core-api')
     compile libraries.springBoot
     compile libraries.axonServer
+    compile libraries.axon
 }

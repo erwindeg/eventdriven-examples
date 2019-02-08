@@ -1,0 +1,91 @@
+plugins {
+    id 'org.springframework.boot' version '2.0.3.RELEASE' apply false
+}
+
+subprojects { subProject ->
+
+    apply plugin: "jacoco"
+    apply plugin: 'io.spring.dependency-management'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        maven { url "https://repo.spring.io/release" }
+        jcenter()
+        maven { url "https://repo.spring.io/milestone" }
+    }
+
+    ext {
+        assertjVersion = '3.9.0'
+        axonServerVersion = '4.0.3'
+        axonVersion = '4.0.3'
+        dockerVersion = '3.2.3'
+        jacksonKotlinVersion = '2.9.6'
+        javaSource = '1.8'
+        javaTarget = '1.8'
+        junitVersion = '5.3.2'
+        kotlinVersion = '1.2.31'
+        springBootVersion = '2.1.2.RELEASE'
+
+        ext.libraries = [
+                axon                   : [
+                        "org.axonframework:axon-spring-boot-starter:${axonVersion}",
+//                        "org.axonframework:axon-core:${axonVersion}",
+                        "org.axonframework:axon-modelling:${axonVersion}"
+                ],
+                axonServer                : [
+                        "org.axonframework:axon-server-connector:${axonServerVersion}"
+                ],
+                axonTest               : [
+                        "org.axonframework:axon-test:${axonVersion}"
+                ],
+                docker                 : [
+                        "com.bmuschko:gradle-docker-plugin:$dockerVersion"
+                ],
+                junit                  : [
+                        "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
+
+                ],
+                kotlin                 : [
+                        "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
+                        "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
+                        "com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}"
+                ],
+                springBoot             : [
+                        'org.springframework.boot:spring-boot-starter-webflux',
+                        'org.springframework.boot:spring-boot-starter-actuator',
+                        'org.springframework.boot:spring-boot-configuration-processor'
+                ],
+                springBootJPA          : [
+                        "org.springframework.boot:spring-boot-starter-data-jpa",
+                        "com.h2database:h2"
+                ],
+                springBootTest         : [
+                        // Transitively provides, junit, assertj and mockito.
+                        'org.springframework.boot:spring-boot-starter-test'
+                ]
+        ]
+    }
+
+    buildscript {
+        repositories {
+            mavenCentral()
+            maven {
+                url "https://repo.spring.io/milestone"
+            }
+            maven {
+                url "https://repo.spring.io/release"
+            }
+            maven {
+                url "https://plugins.gradle.org/m2/"
+            }
+        }
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom  org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+        }
+    }
+
+}

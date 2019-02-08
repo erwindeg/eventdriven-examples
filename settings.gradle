@@ -1,0 +1,3 @@
+rootProject.name = 'eventdriven-examples'
+include 'core-api',
+        'rest-facade'
