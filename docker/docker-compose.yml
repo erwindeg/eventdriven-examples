@@ -1,0 +1,15 @@
+version: '3.4'
+services:
+  axonserver:
+    image: axoniq/axonserver
+    container_name: my-axon-server
+    ports:
+    - 8024:8024
+    - 8124:8124
+    networks:
+    - axonnet
+    - default
+
+networks:
+  axonnet:
+    driver: bridge

@@ -1,0 +1,25 @@
+# used to ignore certain files by git
+# mac osx files
+.DS_Store
+#gradle build files
+.gradle
+build
+
+# intellij files
+.idea/*
+**/gradle.properties
+*.ipr
+*.iws
+*.iml
+target/
+**/node_modules/*
+**/out/*
+rebel.xml
+.bin
+reactor-examples.iml
+
+*.db
+**/*.db
+
+database.mv.db
+database.lock.db

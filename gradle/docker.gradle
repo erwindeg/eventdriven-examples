@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath libraries.docker
+    }
+}
+
+// use fully qualified class name
+apply plugin: com.bmuschko.gradle.docker.DockerRemoteApiPlugin
+
+repositories {
+    maven { url 'https://oss.sonatype.org/content/groups/public' }
+}
+
+dependencies {
+    dockerJava 'com.github.docker-java:docker-java:3.1.0-SNAPSHOT'
+    dockerJava 'org.slf4j:slf4j-simple:1.7.5'
+    dockerJava 'cglib:cglib:3.2.0'
+}
+
+// import task classes
+import com.bmuschko.gradle.docker.tasks.image.*
+
+def dockerBuildContext = file("$buildDir/docker-build-context")
+def dockerImageName = project.name
+def tagVersion = '1.0.0'
+def tagName = dockerImageName
+
+task prepDockerBuildContext(type: Copy) {
+    from "$project.rootDir/docker/springboot"
+    into dockerBuildContext
+}
+task copyFatJar(type: Copy, dependsOn: bootJar) {
+    from "$buildDir/libs"
+    into dockerBuildContext
+}
+task buildDockerImage(type: DockerBuildImage) {
+    dependsOn prepDockerBuildContext, copyFatJar
+    inputDir = dockerBuildContext
+    buildArgs = ['jarName': project.name+'.jar' ]
+    tag = tagName +":"+tagVersion
+}
+
+task pushDockerImage(type: DockerPushImage) {
+    dependsOn buildDockerImage
+    imageName = tagName
+    tag = tagVersion
+}
+
