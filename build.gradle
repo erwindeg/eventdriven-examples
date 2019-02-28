@@ -25,42 +25,46 @@ subprojects { subProject ->
         javaTarget = '1.8'
         junitVersion = '5.3.2'
         kotlinVersion = '1.2.31'
-        springBootVersion = '2.1.2.RELEASE'
+        springBootVersion = '2.1.3.RELEASE'
 
         ext.libraries = [
-                axon                   : [
+                axon          : [
                         "org.axonframework:axon-spring-boot-starter:${axonVersion}",
-//                        "org.axonframework:axon-core:${axonVersion}",
                         "org.axonframework:axon-modelling:${axonVersion}"
                 ],
-                axonServer                : [
+                axonServer    : [
                         "org.axonframework:axon-server-connector:${axonServerVersion}"
                 ],
-                axonTest               : [
+                axonTest      : [
                         "org.axonframework:axon-test:${axonVersion}"
                 ],
-                docker                 : [
+                docker        : [
                         "com.bmuschko:gradle-docker-plugin:$dockerVersion"
                 ],
-                junit                  : [
+                junit         : [
                         "org.junit.jupiter:junit-jupiter-api:${junitVersion}"
 
                 ],
-                kotlin                 : [
+                kotlin        : [
                         "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion",
                         "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion",
                         "com.fasterxml.jackson.module:jackson-module-kotlin:${jacksonKotlinVersion}"
                 ],
-                springBoot             : [
+                springBoot    : [
                         'org.springframework.boot:spring-boot-starter-webflux',
                         'org.springframework.boot:spring-boot-starter-actuator',
                         'org.springframework.boot:spring-boot-configuration-processor'
                 ],
-                springBootJPA          : [
+                springBootWeb:[
+                        'org.springframework.boot:spring-boot-starter-web',
+                        'org.springframework.boot:spring-boot-starter-actuator',
+                        'org.springframework.boot:spring-boot-configuration-processor'
+                ],
+                springBootJPA : [
                         "org.springframework.boot:spring-boot-starter-data-jpa",
                         "com.h2database:h2"
                 ],
-                springBootTest         : [
+                springBootTest: [
                         // Transitively provides, junit, assertj and mockito.
                         'org.springframework.boot:spring-boot-starter-test'
                 ]
@@ -84,7 +88,7 @@ subprojects { subProject ->
 
     dependencyManagement {
         imports {
-            mavenBom  org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+            mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
         }
     }
 

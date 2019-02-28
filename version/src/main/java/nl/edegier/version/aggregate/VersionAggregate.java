@@ -26,7 +26,6 @@ public class VersionAggregate {
 
     @EventHandler
     public void handle(VersionCreatedEvent event) {
-        LOGGER.info("Handling event");
-        this.id= event.getId();
+        this.id = event.getId();
     }
 }
