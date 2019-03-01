@@ -8,10 +8,9 @@ targetCompatibility = javaTarget
 
 
 dependencies {
-    compile project(':market')
-    compile project(':version')
-    compile project(':rest-facade')
+    compile project(':core-api')
     compile libraries.springBoot
+    compile libraries.springBootJPA
     compile libraries.axonServer
     compile libraries.axon
 }
