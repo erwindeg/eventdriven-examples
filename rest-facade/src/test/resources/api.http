@@ -1,0 +1,45 @@
+GET http://localhost:8080/market
+
+###
+POST http://localhost:8080/user
+Accept: application/json
+
+{
+  "userId": "user2"
+}
+
+###
+GET http://localhost:8080/user
+Accept: application/json
+
+{
+  "userId": "user2"
+}
+
+###
+POST http://localhost:8080/quote
+Accept: application/json
+
+{
+  "userId": "user2",
+  "fromCurrency" : "EUR",
+  "toCurrency": "BTC",
+  "amount": "0.01"
+}
+
+> {%
+  client.global.set("quoteId", response.body.id);
+%}
+###
+
+###
+POST http://localhost:8080/order
+Accept: application/json
+
+{
+  "userId": "user2",
+  "quoteId": "{{quoteId}}"
+}
+
+###
+GET http://localhost:8080/portfolio

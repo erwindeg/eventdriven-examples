@@ -1,6 +1,6 @@
 rootProject.name = 'eventdriven-examples'
 include 'core-api',
         'market',
-        'version',
+        'trading',
         'rest-facade',
         'monolith'

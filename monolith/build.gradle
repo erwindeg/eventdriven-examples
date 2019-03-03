@@ -5,13 +5,9 @@ apply from: '../gradle/docker.gradle'
 sourceCompatibility = javaSource
 targetCompatibility = javaTarget
 
-
-
 dependencies {
     compile project(':market')
-    compile project(':version')
+    compile project(':trading')
     compile project(':rest-facade')
     compile libraries.springBoot
-    compile libraries.axonServer
-    compile libraries.axon
 }

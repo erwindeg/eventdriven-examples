@@ -1,5 +1,6 @@
 package nl.trifork.coins.restfacade.controller;
 
+import nl.trifork.coins.coreapi.CoinDto;
 import nl.trifork.coins.coreapi.GetCoinQuery;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-
-import java.util.Map;
 
 @RestController
 public class MarketRestController {
@@ -29,11 +28,12 @@ public class MarketRestController {
     @RequestMapping(value = "/market",
             produces = {"application/json;charset=UTF-8"},
             method = RequestMethod.GET)
-    public Mono<Map> getMarket() {
-        SubscriptionQueryResult<Map, Map> query = this.queryGateway.subscriptionQuery(new GetCoinQuery("1"), Map.class, Map.class);
+    public Mono<CoinDto> getMarket() {
+        //TODO: Error handling
+        SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery("1"), CoinDto.class, CoinDto.class);
 
-        Mono<Map> initial = query.initialResult();
-        Flux<Map> updates = query.updates();
+        Mono<CoinDto> initial = query.initialResult();
+        Flux<CoinDto> updates = query.updates();
 
         return initial.doOnEach(i -> LOGGER.info("Initial {}", i)).flatMap(v -> updates.next()).doOnEach(u -> LOGGER.info("Update {}", u));
     }
