@@ -12,4 +12,7 @@ dependencies {
     compile libraries.springBoot
     compile libraries.axonServer
     compile libraries.axon
+
+    testCompile libraries.springBootTest
+    testCompile libraries.axonTest
 }

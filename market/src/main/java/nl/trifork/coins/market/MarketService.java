@@ -1,6 +1,5 @@
 package nl.trifork.coins.market;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import nl.trifork.coins.coreapi.CoinDto;
 import nl.trifork.coins.coreapi.GetCoinQuery;
 import org.axonframework.queryhandling.QueryHandler;
@@ -38,6 +37,6 @@ public class MarketService {
                 .flatMap(response -> response.bodyToMono(HashMap.class)
                         .map(result -> (Map) result.get("data"))
                         .map(data -> (Map) data.get("coin"))
-                        .map(coin -> new CoinDto((String)coin.get("symbol"),new BigDecimal((String)coin.get("price")))));
+                        .map(coin -> new CoinDto((String) coin.get("symbol"), new BigDecimal((String) coin.get("price")))));
     }
 }
