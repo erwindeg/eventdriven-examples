@@ -10,7 +10,9 @@ targetCompatibility = javaTarget
 dependencies {
     compile project(':core-api')
     compile libraries.springBoot
+    compile libraries.springBootTest
     compile libraries.springBootJPA
     compile libraries.axonServer
     compile libraries.axon
+    compile libraries.axonTest
 }
