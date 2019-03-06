@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -42,5 +43,19 @@ public class MarketControllerTest {
         ResponseEntity<CoinDto> response = this.marketController.getMarket().block();
         assertEquals("BTC", response.getBody().getCurrency());
         assertEquals(new BigDecimal("3333"), response.getBody().getPrice());
+    }
+
+    @Test
+    public void getMarketsShouldReturn404ForNoData() {
+        SubscriptionQueryResult queryResultMock = mock(SubscriptionQueryResult.class);
+        when(this.queryGateway.subscriptionQuery(eq(new GetCoinQuery("1")), eq(CoinDto.class), eq(CoinDto.class)))
+                .thenReturn(queryResultMock);
+        when(queryResultMock.initialResult())
+                .thenReturn(Mono.just(new CoinDto("", BigDecimal.ZERO)));
+        when(queryResultMock.updates())
+                .thenReturn(Flux.never());
+
+        ResponseEntity<CoinDto> response = this.marketController.getMarket().block();
+        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

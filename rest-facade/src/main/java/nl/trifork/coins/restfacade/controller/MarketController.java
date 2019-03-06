@@ -48,7 +48,7 @@ public class MarketController {
 
         //We have to call initialResult() to fire the QueryHandler in MarketService. We subscribe to the updates() to receive
         //the data which is emitted through the QueryUpdateEmitter in MarketService
-        query.initialResult();
+        query.initialResult().subscribe();
         Flux<CoinDto> updates = query.updates();
 
         //retrieve the first emitted value by using next(), this turns the Flux into a Mono
