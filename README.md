@@ -3,7 +3,7 @@ Reactive, event driven microservices in Java
 
 ## Start axon server
 ```sh
-docker-compose -f docker/docker-compose.yml up -d
+docker-compose -f docker/docker-compose.yml up
 ```
 
 ## Run app as a monolith
