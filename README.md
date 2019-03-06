@@ -2,17 +2,35 @@
 Reactive, event driven microservices in Java
 
 ## Start axon server
-docker/docker-compose up
+```sh
+docker-compose -f docker/docker-compose.yml up -d
+```
 
 ## Run app as a monolith
-Run monolith/Main class
+```sh
+./gradlew clean build jar
+java -jar monolith/build/libs/monolith.jar 
+```
 
-## Run app as  microservices
-Use the main classes of the different modules:
-e.g. Run rest-facade/RestFacadeApp class
+## Run app as microservices
+```sh
+./gradlew clean build jar
+java -jar market/build/libs/market.jar 
+java -jar trading/build/libs/trading.jar 
+java -jar rest-facade/build/libs/rest-facade.jar 
+```
 
-## build all modules
-gradle clean build
+## Build all modules
+without tests:
+```sh
+./gradlew clean build -x test
+```
+with tests:
+```sh
+./gradlew clean build
+```
 
-## building docker images
-gradle buildDockerImage
+## Building docker images
+```sh
+./gradlew buildDockerImage
+```
