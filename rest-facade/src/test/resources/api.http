@@ -1,24 +1,25 @@
 GET http://localhost:8080/market
 
 ###
+
 POST http://localhost:8080/user
 Accept: application/json
+Content-type: application/json
 
 {
   "userId": "user2"
 }
 
 ###
-GET http://localhost:8080/user
+GET http://localhost:8080/user/user2
 Accept: application/json
+Content-type: application/json
 
-{
-  "userId": "user2"
-}
 
 ###
 POST http://localhost:8080/quote
 Accept: application/json
+Content-type: application/json
 
 {
   "userId": "user2",
@@ -35,6 +36,7 @@ Accept: application/json
 ###
 POST http://localhost:8080/order
 Accept: application/json
+Content-type: application/json
 
 {
   "userId": "user2",
@@ -43,3 +45,6 @@ Accept: application/json
 
 ###
 GET http://localhost:8080/portfolio
+Accept: application/json
+
+###
