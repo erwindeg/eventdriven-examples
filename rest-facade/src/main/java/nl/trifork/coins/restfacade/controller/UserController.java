@@ -1,24 +1,25 @@
 package nl.trifork.coins.restfacade.controller;
 
 import nl.trifork.coins.coreapi.CreateLedgerCommand;
-import nl.trifork.coins.coreapi.UserRequestDto;
 import nl.trifork.coins.coreapi.GetLedgerQuery;
 import nl.trifork.coins.coreapi.LedgerDto;
+import nl.trifork.coins.coreapi.UserRequestDto;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import static reactor.core.publisher.Mono.fromFuture;
+import java.util.concurrent.CompletableFuture;
+
+import static org.springframework.http.HttpStatus.CONFLICT;
+import static org.springframework.http.HttpStatus.CREATED;
+import static reactor.core.publisher.Mono.*;
 
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
@@ -31,19 +32,18 @@ public class UserController {
         this.queryGateway = queryGateway;
     }
 
-    @RequestMapping(value = "/user",
-            produces = {"application/json;charset=UTF-8"},
-            method = RequestMethod.POST)
+    @PostMapping
     public Mono<ResponseEntity> createUser(@RequestBody UserRequestDto userRequest) {
-        return fromFuture(this.commandGateway.send(new CreateLedgerCommand(userRequest.getUserId())))
-                .map(id -> new ResponseEntity(HttpStatus.CREATED))
-                .onErrorReturn(new ResponseEntity(HttpStatus.CONFLICT));
+        CompletableFuture<Object> completableFuture = commandGateway.send(new CreateLedgerCommand(userRequest.getUserId()));
+        return fromFuture(completableFuture)
+                .map(id -> new ResponseEntity(CREATED))
+                .onErrorReturn(new ResponseEntity(CONFLICT));
     }
 
-    @RequestMapping(value = "/user",
-            produces = {"application/json;charset=UTF-8"},
-            method = RequestMethod.GET)
-    public Mono<LedgerDto> getUser(@RequestBody UserRequestDto userRequest) {
-        return fromFuture(this.queryGateway.query(new GetLedgerQuery(userRequest.getUserId()), LedgerDto.class));
+    @GetMapping("/{userId}")
+    public Mono<LedgerDto> getUser(@PathVariable String userId) {
+        //TODO: error handling to get 404 when user isn't found
+        return fromFuture(queryGateway.query(new GetLedgerQuery(userId), LedgerDto.class));
     }
+
 }

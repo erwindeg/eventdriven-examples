@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +20,7 @@ import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
 
 @RestController
+@RequestMapping("/market")
 public class MarketController {
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketController.class);
 
@@ -40,9 +42,7 @@ public class MarketController {
     * Since we return 1 response to the client, we use a Mono.
     *
     */
-    @RequestMapping(value = "/market",
-            produces = {"application/json;charset=UTF-8"},
-            method = RequestMethod.GET)
+    @GetMapping
     public Mono<ResponseEntity<CoinDto>> getMarket() {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery("1"), CoinDto.class, CoinDto.class);
 

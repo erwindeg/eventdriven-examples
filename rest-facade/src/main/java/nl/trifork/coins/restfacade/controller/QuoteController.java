@@ -5,16 +5,14 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
 @RestController
+@RequestMapping("/quote")
 public class QuoteController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(QuoteController.class);
@@ -27,9 +25,7 @@ public class QuoteController {
         this.queryGateway = queryGateway;
     }
 
-    @RequestMapping(value = "/quote",
-            produces = {"application/json;charset=UTF-8"},
-            method = RequestMethod.POST)
+    @PostMapping
     public Mono<QuoteDto> generateQuote(@RequestBody QuoteRequestDto quoteRequestDto) {
         //TODO: error handling
         String id = UUID.randomUUID().toString();

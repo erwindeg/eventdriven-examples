@@ -10,16 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import static java.time.Duration.ofSeconds;
 import static reactor.core.publisher.Mono.fromFuture;
 
 @RestController
+@RequestMapping("/order")
 public class OrderController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderController.class);
@@ -32,9 +30,7 @@ public class OrderController {
         this.queryGateway = queryGateway;
     }
 
-    @RequestMapping(value = "/order",
-            produces = {"application/json;charset=UTF-8"},
-            method = RequestMethod.POST)
+    @PostMapping
     public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody  OrderRequestDto orderRequest) {
 
         return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderRequest.getQuoteId()+"_order",orderRequest.getUserId())))
