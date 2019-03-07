@@ -33,6 +33,6 @@ public class QuoteController {
 
         this.commandGateway.send(new GenerateQuoteCommand(id, quoteRequestDto.getUserId(), quoteRequestDto.getFromCurrency(), quoteRequestDto.getToCurrency(), quoteRequestDto.getAmount()));
 
-        return quoteResponseFlux.next().map(quoteReponse -> quoteReponse.getQuote());
+        return quoteResponseFlux.next().map(GetQuoteResponse::getQuote);
     }
 }

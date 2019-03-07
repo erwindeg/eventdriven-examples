@@ -2,7 +2,6 @@ package nl.trifork.coins.restfacade.controller;
 
 import nl.trifork.coins.coreapi.CreateLedgerCommand;
 import nl.trifork.coins.coreapi.GetLedgerQuery;
-import nl.trifork.coins.coreapi.LedgerDto;
 import nl.trifork.coins.coreapi.UserRequestDto;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
@@ -10,14 +9,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Mono;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.CREATED;
-import static reactor.core.publisher.Mono.*;
+import static org.springframework.http.ResponseEntity.created;
+import static org.springframework.http.ResponseEntity.status;
+import static reactor.core.publisher.Mono.fromFuture;
 
 @RestController
 @RequestMapping("/user")
@@ -34,20 +35,19 @@ public class UserController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity> createUser(@RequestBody UserRequestDto userRequest) {
+    public Mono<ResponseEntity> createUser(@RequestBody UserRequestDto userRequest, UriComponentsBuilder uriComponentsBuilder) {
         CompletableFuture<Object> completableFuture = commandGateway.send(new CreateLedgerCommand(userRequest.getUserId()));
+
         return fromFuture(completableFuture)
-                .map(id -> new ResponseEntity(CREATED))
-                .onErrorReturn(new ResponseEntity(CONFLICT));
+                .map(id -> created(uriComponentsBuilder.path("/user/{id}").buildAndExpand(id).toUri()))
+                .onErrorReturn(status(CONFLICT))
+                .map(ResponseEntity.HeadersBuilder::build);
     }
 
     @GetMapping("/{userId}")
-    public Mono<ResponseEntity<LedgerDto>> getUser(@PathVariable String userId) {
+    public Mono<ResponseEntity> getUser(@PathVariable String userId) {
         return fromFuture(queryGateway.query(new GetLedgerQuery(userId), Optional.class))
-                .flatMap(Mono::justOrEmpty)
-                .map(ResponseEntity::ok)
-                .defaultIfEmpty(ResponseEntity.notFound().build());
-
+                .map(ResponseEntity::of);
     }
 
 }
