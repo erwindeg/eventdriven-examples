@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 import static org.springframework.http.HttpStatus.CONFLICT;
@@ -41,9 +42,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}")
-    public Mono<LedgerDto> getUser(@PathVariable String userId) {
-        //TODO: error handling to get 404 when user isn't found
-        return fromFuture(queryGateway.query(new GetLedgerQuery(userId), LedgerDto.class));
+    public Mono<ResponseEntity<LedgerDto>> getUser(@PathVariable String userId) {
+        return fromFuture(queryGateway.query(new GetLedgerQuery(userId), Optional.class))
+                .flatMap(Mono::justOrEmpty)
+                .map(ledgerDto -> ResponseEntity.ok(ledgerDto))
+                .defaultIfEmpty(ResponseEntity.notFound().build());
+
     }
 
 }

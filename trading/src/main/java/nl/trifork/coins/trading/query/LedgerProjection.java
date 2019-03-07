@@ -9,7 +9,7 @@ import org.axonframework.queryhandling.QueryHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
+import java.util.Optional;
 
 @Service
 public class LedgerProjection {
@@ -29,14 +29,9 @@ public class LedgerProjection {
     }
 
     @QueryHandler
-    public LedgerDto getLedger(GetLedgerQuery query) {
-        try {
-            LedgerEntity ledger = this.repository.getOne(query.getId());
-            return new LedgerDto(ledger.getUserId(), ledger.getAssets());
-        } catch (EntityNotFoundException e) {
-            throw new IllegalStateException("ledger doesn't exist");
-        }
-
-
+    public Optional getLedger(GetLedgerQuery query) {
+        return repository
+                .findById(query.getId())
+                .map(ledger -> new LedgerDto(ledger.getUserId(), ledger.getAssets()));
     }
 }
