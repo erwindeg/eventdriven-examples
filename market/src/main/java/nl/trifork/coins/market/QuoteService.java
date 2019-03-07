@@ -33,7 +33,7 @@ public class QuoteService {
         LOGGER.info("GenerateQuoteCommand {}",command);
         this.marketService
                 .retrieveMarketData(command.getId())
-                .map(coin -> coin.getPrice())
+                .map(CoinDto::getPrice)
                 .doOnError(error ->
                         this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), error.getMessage()))))
                 .subscribe(price ->
