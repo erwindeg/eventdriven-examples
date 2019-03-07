@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(MockitoJUnitRunner.class)
 public class MarketServiceTest {
 
-    private static final String MOCK_MARKETS_URL = "localhost";
+    private static final String MOCK_MARKETS_URL = "http://localhost:8099";
     private static final String MOCK_RESPONSE_BODY = "{ \"status\": \"success\", \"data\": { \"base\": { \"symbol\": \"USD\", \"sign\": \"$\" }, \"coin\": { \"id\": 2, \"slug\": \"ethereum-eth\", \"symbol\": \"ETH\", \"name\": \"Ethereum\", \"price\": \"140.4729487729\" } } }";
 
     @Rule
@@ -27,7 +27,7 @@ public class MarketServiceTest {
 
     @Before
     public void setup() {
-        this.marketService = new MarketService("http", MOCK_MARKETS_URL, 8099);
+        this.marketService = new MarketService(MOCK_MARKETS_URL);
         createMarketsStub();
     }
 

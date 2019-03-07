@@ -40,7 +40,7 @@ public class MarketControllerTest {
         when(queryResultMock.updates())
                 .thenReturn(Flux.just(new CoinDto("BTC", new BigDecimal("3333"))));
 
-        ResponseEntity<CoinDto> response = this.marketController.getMarket().block();
+        ResponseEntity<CoinDto> response = this.marketController.getCoin("1").block();
         assertEquals("BTC", response.getBody().getCurrency());
         assertEquals(new BigDecimal("3333"), response.getBody().getPrice());
     }
@@ -55,7 +55,7 @@ public class MarketControllerTest {
         when(queryResultMock.updates())
                 .thenReturn(Flux.never());
 
-        ResponseEntity<CoinDto> response = this.marketController.getMarket().block();
+        ResponseEntity<CoinDto> response = this.marketController.getCoin("1").block();
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 }

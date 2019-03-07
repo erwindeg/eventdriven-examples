@@ -2,7 +2,7 @@ package nl.trifork.coins.coreapi
 
 import java.math.BigDecimal
 
-data class CoinDto(val currency: String, val price : BigDecimal)
+data class CoinDto(val currency: String?, val price : BigDecimal?)
 data class QuoteRequestDto(val userId: String, val fromCurrency: String, val toCurrency: String, val amount : BigDecimal )
 data class QuoteDto(val id : String, val fromCurrency: String, val toCurrency: String, val amount : BigDecimal,  val price : BigDecimal )
 data class OrderRequestDto(val userId: String, val quoteId: String )
