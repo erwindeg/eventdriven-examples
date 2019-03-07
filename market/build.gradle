@@ -13,4 +13,8 @@ dependencies {
     compile libraries.springBootJPA
     compile libraries.axonServer
     compile libraries.axon
+
+    testCompile libraries.wiremock
+    testCompile libraries.springBootTest
+    testCompile libraries.axonTest
 }

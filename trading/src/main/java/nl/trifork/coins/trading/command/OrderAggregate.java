@@ -41,6 +41,8 @@ public class OrderAggregate {
         this.status = CREATED;
     }
 
+
+    //TODO: validate state, this command should fail if order is not pending
     @CommandHandler
     public void executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
