@@ -45,7 +45,7 @@ public class UserController {
     public Mono<ResponseEntity<LedgerDto>> getUser(@PathVariable String userId) {
         return fromFuture(queryGateway.query(new GetLedgerQuery(userId), Optional.class))
                 .flatMap(Mono::justOrEmpty)
-                .map(ledgerDto -> ResponseEntity.ok(ledgerDto))
+                .map(ResponseEntity::ok)
                 .defaultIfEmpty(ResponseEntity.notFound().build());
 
     }
