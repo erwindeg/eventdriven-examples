@@ -46,7 +46,8 @@ public class UserController {
 
     @GetMapping("/{userId}")
     public Mono<ResponseEntity> getUser(@PathVariable String userId) {
-        return fromFuture(queryGateway.query(new GetLedgerQuery(userId), Optional.class))
+        CompletableFuture<Optional> completableFuture = queryGateway.query(new GetLedgerQuery(userId), Optional.class);
+        return fromFuture(completableFuture)
                 .map(ResponseEntity::of);
     }
 
