@@ -43,8 +43,5 @@ Content-type: application/json
   "quoteId": "{{quoteId}}"
 }
 
-###
-GET http://localhost:8080/portfolio
-Accept: application/json
 
 ###
