@@ -46,11 +46,11 @@ public class MarketService {
     }
 
     @QueryHandler
+    //Exercise 4: add the doOnComplete
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
         retrieveMarketData(getCoinsQuery.getIds())
                 .doOnComplete(() -> this.queryUpdateEmitter.complete(GetCoinsQuery.class, query -> true))
-                .doOnEach(i -> LOGGER.info("Coin {}", i))
                 .subscribe(
                         coin -> this.queryUpdateEmitter.emit(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds()), coin),
                         error -> this.queryUpdateEmitter.completeExceptionally(GetCoinsQuery.class, query -> true, error)
@@ -59,6 +59,7 @@ public class MarketService {
     }
 
 
+    //Exercise 1: implement this method
     public Mono<CoinDto> retrieveMarketData(String coinId) {
         return create().get().uri(UriComponentsBuilder.fromHttpUrl(this.baseUrl).path(coinId).build().toUri())
                 .accept(MediaType.APPLICATION_JSON)
@@ -69,6 +70,7 @@ public class MarketService {
                         .map(coin -> new CoinDto((String) coin.get("symbol"), new BigDecimal((String) coin.get("price")))));
     }
 
+    //Exercise 3: implement
     public Flux<CoinDto> retrieveMarketData(List<String> coinIds) {
         return Flux.fromIterable(coinIds)
                 .flatMap(coinId -> retrieveMarketData(coinId));

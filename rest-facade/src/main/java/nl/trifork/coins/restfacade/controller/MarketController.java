@@ -47,6 +47,7 @@ public class MarketController {
      *
      */
     @GetMapping
+    // Exercise 5
     public Mono<ResponseEntity<List<CoinDto>>> getMarket() {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinsQuery(Arrays.asList("1", "2")), CoinDto.class, CoinDto.class);
 
@@ -61,13 +62,14 @@ public class MarketController {
         //use a map to return a ResponseEntity, use onErrorReturn to return 404 not found in case of an error.
         return updates
                 .collectList()
-                .map(coins -> new ResponseEntity<>(coins, HttpStatus.OK))
+                .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))
                 .doOnError(error -> LOGGER.error("{}", error))
                 .onErrorReturn(new ResponseEntity(NOT_FOUND));
     }
 
     @GetMapping("/{coinId}")
+    // Exercise 2
     public Mono<ResponseEntity<CoinDto>> getCoin(@PathVariable String coinId) {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery(coinId), CoinDto.class, CoinDto.class);
 
@@ -76,13 +78,9 @@ public class MarketController {
         query.initialResult().subscribe();
         Flux<CoinDto> updates = query.updates();
 
-        //retrieve the first emitted value by using next(), this turns the Flux into a Mono
-        //specify a timeout of 3 seconds, to  make sure this method doesn't wait forever when no data is emitted
-        //when the timeout expires, an exception is thrown.
-        //use a map to return a ResponseEntity, use onErrorReturn to return 404 not found in case of an error.
         return updates.next()
                 .timeout(ofSeconds(3))
-                .map(coin -> new ResponseEntity<>(coin, HttpStatus.OK))
+                .map(ResponseEntity::ok)
                 .doOnError(error -> LOGGER.error("{}", error))
                 .onErrorReturn(new ResponseEntity(NOT_FOUND));
 

@@ -29,6 +29,7 @@ public class QuoteService {
     QueryUpdateEmitter queryUpdateEmitter;
 
     @CommandHandler
+    //Exercise 6: send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
     public void generateQuote(GenerateQuoteCommand command) {
         LOGGER.info("GenerateQuoteCommand {}",command);
         this.marketService

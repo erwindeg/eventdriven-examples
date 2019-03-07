@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 import static java.time.Duration.ofSeconds;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.ResponseEntity.status;
 import static reactor.core.publisher.Mono.fromFuture;
 
 @RestController
@@ -34,10 +37,10 @@ public class OrderController {
     public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody  OrderRequestDto orderRequest) {
 
         return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderRequest.getQuoteId()+"_order",orderRequest.getUserId())))
-                .onErrorReturn(new ResponseEntity(HttpStatus.NOT_FOUND))
+                .onErrorReturn(status(NOT_FOUND).build())
                 .flatMap(id -> this.queryGateway.subscriptionQuery(new GetOrderQuery(orderRequest.getQuoteId()), OrderDto.class, OrderDto.class).updates().next())
                 .timeout(ofSeconds(3))
-                .map(order -> new ResponseEntity<>(order, HttpStatus.OK))
-                .onErrorReturn(new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR));
+                .map(ResponseEntity::ok)
+                .onErrorReturn(status(INTERNAL_SERVER_ERROR).build());
     }
 }
