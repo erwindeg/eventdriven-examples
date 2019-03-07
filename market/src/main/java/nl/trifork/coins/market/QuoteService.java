@@ -34,8 +34,8 @@ public class QuoteService {
         this.marketService
                 .retrieveMarketData(command.getId())
                 .map(CoinDto::getPrice)
-                .doOnError(error ->
-                        this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), error.getMessage()))))
+                .doOnError(throwable ->
+                        this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), throwable))))
                 .subscribe(price ->
                         this.eventBus.publish(asEventMessage(new QuoteGeneratedEvent(command.getId(), command.getUserId(), command.getFromCurrency(), command.getToCurrency(), command.getAmount(), command.getAmount().multiply(price)))));
     }
@@ -43,18 +43,18 @@ public class QuoteService {
     @EventHandler
     public void on(QuoteGeneratedEvent event) {
         LOGGER.info("QuoteGeneratedEvent {}",event);
-        queryUpdateEmitter.emit(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), new GetQuoteResponse(new QuoteDto(event.getId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice()), null));
+        queryUpdateEmitter.emit(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), new GetQuoteResponse(new QuoteDto(event.getId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice())));
     }
 
     @EventHandler
     public void on(GenerateQuoteFailedEvent event) {
         LOGGER.info("GenerateQuoteFailedEvent {}",event);
-        queryUpdateEmitter.emit(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), new GetQuoteResponse(null, event.getMessage()));
+        queryUpdateEmitter.completeExceptionally(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), event.getCause());
     }
 
     @QueryHandler
     public GetQuoteResponse getQuote(GetQuoteQuery query){
         //normally implemented by looking up the quote in the read model
-        return new GetQuoteResponse(null,null);
+        return new GetQuoteResponse(null);
     }
 }
