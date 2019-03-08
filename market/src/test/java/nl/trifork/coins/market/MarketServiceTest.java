@@ -2,6 +2,7 @@ package nl.trifork.coins.market;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import nl.trifork.coins.coreapi.CoinDto;
+import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetCoinsQuery;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.junit.Before;
@@ -92,6 +93,13 @@ public class MarketServiceTest {
         assertNotNull(coins);
         assertEquals(2, coins.size());
         //TODO: check coins contains in any order
+    }
+
+
+    @Test
+    public void shouldEmitItes() {
+        marketService.query(new GetCoinQuery("1"));
+        verify(queryUpdateEmitter, timeout(1000).times(1)).emit(eq(GetCoinQuery.class), any(), any(CoinDto.class));
     }
 
     @Test
