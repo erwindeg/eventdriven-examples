@@ -69,7 +69,8 @@ public class MarketController {
     }
 
     @GetMapping("/{coinId}")
-    // Exercise 2
+    //FIXME Exercise 2: map the response from the "updates" Flux to the correct response of this method
+    //Hints: think about exception handling. What happens when there is no (valid) value emitted from the Flux?
     public Mono<ResponseEntity<CoinDto>> getCoin(@PathVariable String coinId) {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery(coinId), CoinDto.class, CoinDto.class);
 
@@ -78,11 +79,6 @@ public class MarketController {
         query.initialResult().subscribe();
         Flux<CoinDto> updates = query.updates();
 
-        return updates.next()
-                .timeout(ofSeconds(3))
-                .map(ResponseEntity::ok)
-                .doOnError(error -> LOGGER.error("{}", error))
-                .onErrorReturn(new ResponseEntity(NOT_FOUND));
-
+        return Mono.empty();
     }
 }
