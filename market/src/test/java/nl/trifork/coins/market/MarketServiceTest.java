@@ -59,8 +59,8 @@ public class MarketServiceTest {
         Mono<CoinDto> response = marketService.retrieveSingleCoinData("1");
         CoinDto coin = response.block();
         assertNotNull(coin);
-        assertEquals("ETH", coin.getCurrency());
-        assertEquals(new BigDecimal("140.4729487729"), coin.getPrice());
+        assertEquals("BTC", coin.getCurrency());
+        assertEquals(new BigDecimal("3320.4729487729"), coin.getPrice());
     }
 
     /*
