@@ -44,11 +44,12 @@ public class MarketService {
     }
 
     @QueryHandler
-    //Exercise 4: add the doOnComplete
+    //FIXME Exercise 4: Subscribe to the Flux and emit each item using the queryUpdateEmitter. Don't forget to handle the exceptions. Additionally we should signal when we
+    //are done emitting items.
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
         retrieveMultipleCoinsData(getCoinsQuery.getIds())
-                .doOnComplete(() -> this.queryUpdateEmitter.complete(GetCoinsQuery.class, query -> true))
+                .doOnComplete(() -> this.queryUpdateEmitter.complete(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds())))
                 .subscribe(
                         coin -> this.queryUpdateEmitter.emit(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds()), coin),
                         error -> this.queryUpdateEmitter.completeExceptionally(GetCoinsQuery.class, query -> true, error)
