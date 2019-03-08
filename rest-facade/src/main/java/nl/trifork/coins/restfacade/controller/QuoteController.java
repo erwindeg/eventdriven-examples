@@ -46,6 +46,7 @@ public class QuoteController {
         this.commandGateway.send(new GenerateQuoteCommand(id, quoteRequestDto.getUserId(), quoteRequestDto.getFromCurrency(), quoteRequestDto.getToCurrency(), quoteRequestDto.getAmount()));
 
         return quoteResponseFlux
+                .filter(getQuoteResponse -> null != getQuoteResponse.getQuote())
                 .next()
                 .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))
