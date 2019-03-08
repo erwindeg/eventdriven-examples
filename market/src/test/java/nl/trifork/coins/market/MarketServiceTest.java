@@ -2,10 +2,14 @@ package nl.trifork.coins.market;
 
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import nl.trifork.coins.coreapi.CoinDto;
+import nl.trifork.coins.coreapi.GetCoinsQuery;
+import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -14,9 +18,16 @@ import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MarketServiceTest {
@@ -27,11 +38,17 @@ public class MarketServiceTest {
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8099);
+
+    @Mock
+    private QueryUpdateEmitter queryUpdateEmitter;
+
+    @InjectMocks
     private MarketService marketService;
 
     @Before
     public void setup() {
-        this.marketService = new MarketService(MOCK_MARKETS_URL);
+        this.marketService.baseUrl = MOCK_MARKETS_URL;
+        this.marketService.queryUpdateEmitter = queryUpdateEmitter;
         createMarketsStub();
     }
 
@@ -50,6 +67,8 @@ public class MarketServiceTest {
                         .withStatus(200)));
     }
 
+
+    //TODO: test error cases
 
     /*
      * This test must pass to complete Exercise 1
@@ -72,8 +91,13 @@ public class MarketServiceTest {
         List<CoinDto> coins = response.collectList().block();
         assertNotNull(coins);
         assertEquals(2, coins.size());
-        assertEquals("BTC", coins.get(0).getCurrency());
-        assertEquals("ETH", coins.get(1).getCurrency());
+        //TODO: check coins contains in any order
     }
 
+    @Test
+    public void shouldEmitItems() {
+        marketService.queryAll(new GetCoinsQuery(Arrays.asList("1", "2")));
+        verify(queryUpdateEmitter, timeout(1000).times(2)).emit(eq(GetCoinsQuery.class), any(), any(CoinDto.class));
+        verify(queryUpdateEmitter, timeout(1000).times(1)).complete(eq(GetCoinsQuery.class), any());
+    }
 }

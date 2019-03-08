@@ -26,9 +26,10 @@ import static org.springframework.web.reactive.function.client.WebClient.create;
 public class MarketService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketService.class);
+
     @Autowired
-    private QueryUpdateEmitter queryUpdateEmitter;
-    private String baseUrl = "https://api.coinranking.com/v1/public/coin/";
+    QueryUpdateEmitter queryUpdateEmitter;
+    String baseUrl = "https://api.coinranking.com/v1/public/coin/";
 
     public MarketService() {
     }
