@@ -27,7 +27,7 @@ Content-type: application/json
 
 {
   "userId": "user2",
-  "fromCurrency" : "EUR",
+  "fromCurrency": "EUR",
   "toCurrency": "BTC",
   "amount": "0.01"
 }
@@ -35,6 +35,7 @@ Content-type: application/json
 > {%
   client.global.set("quoteId", response.body.id);
 %}
+
 ###
 
 ###

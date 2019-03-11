@@ -20,8 +20,6 @@ import java.util.UUID;
 
 import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.MediaType.TEXT_PLAIN;
-import static org.springframework.http.ResponseEntity.ok;
 import static org.springframework.http.ResponseEntity.status;
 
 @RestController
@@ -46,7 +44,6 @@ public class QuoteController {
         this.commandGateway.send(new GenerateQuoteCommand(id, quoteRequestDto.getUserId(), quoteRequestDto.getFromCurrency(), quoteRequestDto.getToCurrency(), quoteRequestDto.getAmount()));
 
         return quoteResponseFlux
-                .filter(getQuoteResponse -> null != getQuoteResponse.getQuote())
                 .next()
                 .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))

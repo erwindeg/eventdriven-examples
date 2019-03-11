@@ -20,6 +20,6 @@ public class OrderService {
     @EventHandler
     public void createOrder(QuoteGeneratedEvent event) {
         LOGGER.info("Generating Order for quote");
-        this.commandGateway.send(new CreateOrderCommand(event.getId()+"_order", event.getUserId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice()));
+        this.commandGateway.send(new CreateOrderCommand(event.getId() + "_order", event.getUserId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice()));
     }
 }

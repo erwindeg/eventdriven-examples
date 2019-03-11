@@ -39,8 +39,8 @@ task copyFatJar(type: Copy, dependsOn: bootJar) {
 task buildDockerImage(type: DockerBuildImage) {
     dependsOn prepDockerBuildContext, copyFatJar
     inputDir = dockerBuildContext
-    buildArgs = ['jarName': project.name+'.jar' ]
-    tag = tagName +":"+tagVersion
+    buildArgs = ['jarName': project.name + '.jar']
+    tag = tagName + ":" + tagVersion
 }
 
 task pushDockerImage(type: DockerPushImage) {

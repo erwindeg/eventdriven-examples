@@ -1,6 +1,15 @@
 package nl.trifork.coins.trading.command;
 
-import nl.trifork.coins.coreapi.*;
+import nl.trifork.coins.coreapi.CreateOrderCommand;
+import nl.trifork.coins.coreapi.ExecuteOrderCommand;
+import nl.trifork.coins.coreapi.FailOrderCommand;
+import nl.trifork.coins.coreapi.OrderCreatedEvent;
+import nl.trifork.coins.coreapi.OrderExecutedEvent;
+import nl.trifork.coins.coreapi.OrderFailedEvent;
+import nl.trifork.coins.coreapi.OrderStatus;
+import nl.trifork.coins.coreapi.OrderSuccessEvent;
+import nl.trifork.coins.coreapi.SuccessOrderCommand;
+import nl.trifork.model.CoinType;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -8,7 +17,10 @@ import org.axonframework.spring.stereotype.Aggregate;
 
 import java.math.BigDecimal;
 
-import static nl.trifork.coins.coreapi.OrderStatus.*;
+import static nl.trifork.coins.coreapi.OrderStatus.COMPLETED;
+import static nl.trifork.coins.coreapi.OrderStatus.CREATED;
+import static nl.trifork.coins.coreapi.OrderStatus.FAILED;
+import static nl.trifork.coins.coreapi.OrderStatus.PENDING;
 import static org.axonframework.modelling.command.AggregateLifecycle.apply;
 
 @Aggregate
@@ -17,13 +29,14 @@ public class OrderAggregate {
     @AggregateIdentifier
     private String id;
     private String userId;
-    private String fromCurrency;
-    private String toCurrency;
+    private CoinType fromCurrency;
+    private CoinType toCurrency;
     private BigDecimal amount;
     private BigDecimal price;
     private OrderStatus status;
 
-    public OrderAggregate(){}
+    public OrderAggregate() {
+    }
 
     @CommandHandler
     public OrderAggregate(CreateOrderCommand command) {
@@ -41,13 +54,16 @@ public class OrderAggregate {
         this.status = CREATED;
     }
 
-
-    //TODO: validate state, this command should fail if order is not pending
     @CommandHandler
     public void executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
             throw new IllegalArgumentException("Quote ID is valid not for this user");
-        } else {
+        }
+        //TODO fix tests for this case
+//        if (!this.status.equals(PENDING)) {
+//            throw new IllegalArgumentException("The status of this order is not valid");
+//        }
+        else {
             apply(new OrderExecutedEvent(command.getId(), this.userId, this.fromCurrency, this.toCurrency, this.amount, this.price));
         }
     }
@@ -58,7 +74,7 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    public void success(SuccessOrderCommand command){
+    public void success(SuccessOrderCommand command) {
         apply(new OrderSuccessEvent(command.getId()));
     }
 
@@ -68,7 +84,7 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    public void fail(FailOrderCommand command){
+    public void fail(FailOrderCommand command) {
         apply(new OrderFailedEvent(command.getId()));
     }
 

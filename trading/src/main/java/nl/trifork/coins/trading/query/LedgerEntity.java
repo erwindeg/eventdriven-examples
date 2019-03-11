@@ -1,6 +1,10 @@
 package nl.trifork.coins.trading.query;
 
-import javax.persistence.*;
+import nl.trifork.model.CoinType;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,21 +15,21 @@ public class LedgerEntity {
     @Id
     private String userId;
     @ElementCollection
-    private Map<String, BigDecimal> assets = new HashMap<>();
+    private Map<CoinType, BigDecimal> assets = new HashMap<>();
 
     public LedgerEntity() {
     }
 
     public LedgerEntity(String userId) {
-        this(userId,null);
+        this(userId, null);
     }
 
-    public LedgerEntity(String userId, Map<String, BigDecimal> assets) {
+    public LedgerEntity(String userId, Map<CoinType, BigDecimal> assets) {
         this.userId = userId;
         this.assets = assets;
     }
 
-    public void setAssets(Map<String, BigDecimal> assets) {
+    public void setAssets(Map<CoinType, BigDecimal> assets) {
         this.assets = assets;
     }
 
@@ -33,7 +37,7 @@ public class LedgerEntity {
         return this.userId;
     }
 
-    public Map<String,BigDecimal> getAssets() {
+    public Map<CoinType, BigDecimal> getAssets() {
         return new HashMap<>(this.assets);
     }
 }

@@ -8,9 +8,11 @@ import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
 import static java.time.Duration.ofSeconds;
@@ -34,9 +36,9 @@ public class OrderController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody  OrderRequestDto orderRequest) {
+    public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody OrderRequestDto orderRequest) {
 
-        return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderRequest.getQuoteId()+"_order",orderRequest.getUserId())))
+        return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderRequest.getQuoteId() + "_order", orderRequest.getUserId())))
                 .onErrorReturn(status(NOT_FOUND).build())
                 .flatMap(id -> this.queryGateway.subscriptionQuery(new GetOrderQuery(orderRequest.getQuoteId()), OrderDto.class, OrderDto.class).updates().next())
                 .timeout(ofSeconds(3))
