@@ -1,6 +1,13 @@
 package nl.trifork.coins.trading.command;
 
-import nl.trifork.coins.coreapi.*;
+import nl.trifork.coins.coreapi.CreateOrderCommand;
+import nl.trifork.coins.coreapi.ExecuteOrderCommand;
+import nl.trifork.coins.coreapi.FailOrderCommand;
+import nl.trifork.coins.coreapi.OrderCreatedEvent;
+import nl.trifork.coins.coreapi.OrderExecutedEvent;
+import nl.trifork.coins.coreapi.OrderFailedEvent;
+import nl.trifork.coins.coreapi.OrderSuccessEvent;
+import nl.trifork.coins.coreapi.SuccessOrderCommand;
 import nl.trifork.model.CoinType;
 import org.axonframework.test.aggregate.AggregateTestFixture;
 import org.junit.Before;
@@ -27,14 +34,14 @@ public class OrderAggregateTest {
     @Test
     public void executeOrder() {
         fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN))
-                .when(new ExecuteOrderCommand("orderId","userId"))
+                .when(new ExecuteOrderCommand("orderId", "userId"))
                 .expectEvents(new OrderExecutedEvent("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN));
     }
 
     @Test
     public void successOrder() {
         fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN),
-                new ExecuteOrderCommand("orderId","userId"))
+                new ExecuteOrderCommand("orderId", "userId"))
                 .when(new SuccessOrderCommand("orderId"))
                 .expectEvents(new OrderSuccessEvent("orderId"));
     }
@@ -42,7 +49,7 @@ public class OrderAggregateTest {
     @Test
     public void failOrder() {
         fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN),
-                new ExecuteOrderCommand("orderId","userId"))
+                new ExecuteOrderCommand("orderId", "userId"))
                 .when(new FailOrderCommand("orderId"))
                 .expectEvents(new OrderFailedEvent("orderId"));
     }

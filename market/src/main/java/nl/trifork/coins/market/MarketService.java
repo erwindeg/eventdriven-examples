@@ -24,9 +24,9 @@ public class MarketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketService.class);
 
     private final QueryUpdateEmitter queryUpdateEmitter;
-    private final CoinrankingClient coinrankingClient;
+    private final CoinRankingClient coinrankingClient;
 
-    public MarketService(QueryUpdateEmitter queryUpdateEmitter, CoinrankingClient coinrankingClient) {
+    public MarketService(QueryUpdateEmitter queryUpdateEmitter, CoinRankingClient coinrankingClient) {
         this.queryUpdateEmitter = queryUpdateEmitter;
         this.coinrankingClient = coinrankingClient;
     }
@@ -62,16 +62,16 @@ public class MarketService {
         return toCoinDtoMono(coinrankingClient.getCoinInformationWithBaseCurrency(fromCurrency, toCurrency));
     }
 
+    //Exercise 3: implement
+    public Flux<CoinDto> retrieveMultipleCoinsData(List<CoinType> coinTypes) {
+        return Flux.fromIterable(coinTypes).flatMap(this::retrieveSingleCoinData);
+    }
+
     //Exercise 1: implement this method
     private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
         return coinInfo.flatMap(response -> response.bodyToMono(HashMap.class)
                 .map(result -> (Map) result.get("data"))
                 .map(data -> (Map) data.get("coin"))
                 .map(coin -> new CoinDto((String) coin.get("symbol"), new BigDecimal((String) coin.get("price")))));
-    }
-
-    //Exercise 3: implement
-    public Flux<CoinDto> retrieveMultipleCoinsData(List<CoinType> coinTypes) {
-        return Flux.fromIterable(coinTypes).flatMap(this::retrieveSingleCoinData);
     }
 }

@@ -1,8 +1,8 @@
 package nl.trifork.coins.restfacade.controller;
 
 import nl.trifork.coins.coreapi.CoinDto;
-import nl.trifork.model.CoinType;
 import nl.trifork.coins.coreapi.GetCoinQuery;
+import nl.trifork.model.CoinType;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.SubscriptionQueryResult;
 import org.junit.Test;

@@ -1,10 +1,10 @@
 package nl.trifork.coins.trading.command;
 
-import nl.trifork.model.CoinType;
 import nl.trifork.coins.coreapi.CreateLedgerCommand;
 import nl.trifork.coins.coreapi.LedgerCreatedEvent;
 import nl.trifork.coins.coreapi.LedgerMutatedEvent;
 import nl.trifork.coins.coreapi.MutateLedgerCommand;
+import nl.trifork.model.CoinType;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -32,10 +32,10 @@ public class LedgerAggregate {
 
     @CommandHandler
     public LedgerAggregate(CreateLedgerCommand command) {
-        LOGGER.info("Creating ledger for user {}",command.getUserId());
+        LOGGER.info("Creating ledger for user {}", command.getUserId());
         Map<CoinType, BigDecimal> newAssets = new HashMap<>();
         newAssets.put(CoinType.EUR, new BigDecimal("10000"));
-        apply(new LedgerCreatedEvent(command.getUserId(),newAssets));
+        apply(new LedgerCreatedEvent(command.getUserId(), newAssets));
     }
 
     @EventSourcingHandler

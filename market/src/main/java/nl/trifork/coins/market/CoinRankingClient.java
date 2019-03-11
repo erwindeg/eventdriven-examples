@@ -10,14 +10,14 @@ import reactor.core.publisher.Mono;
 import static org.springframework.web.reactive.function.client.WebClient.create;
 
 @Component
-public class CoinrankingClient {
+public class CoinRankingClient {
 
     private String baseUrl = "https://api.coinranking.com/v1/public/coin/";
 
-    public CoinrankingClient() {
+    public CoinRankingClient() {
     }
 
-    public CoinrankingClient(String baseUrl) {
+    public CoinRankingClient(String baseUrl) {
         this.baseUrl = baseUrl;
     }
 

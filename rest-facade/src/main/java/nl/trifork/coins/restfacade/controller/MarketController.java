@@ -1,12 +1,10 @@
 package nl.trifork.coins.restfacade.controller;
 
 
-import java.util.Arrays;
-import java.util.List;
 import nl.trifork.coins.coreapi.CoinDto;
-import nl.trifork.model.CoinType;
 import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetCoinsQuery;
+import nl.trifork.model.CoinType;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.SubscriptionQueryResult;
@@ -19,6 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.NOT_FOUND;

@@ -2,7 +2,9 @@ package nl.trifork.coins.trading.query;
 
 import nl.trifork.model.CoinType;
 
-import javax.persistence.*;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,7 +21,7 @@ public class LedgerEntity {
     }
 
     public LedgerEntity(String userId) {
-        this(userId,null);
+        this(userId, null);
     }
 
     public LedgerEntity(String userId, Map<CoinType, BigDecimal> assets) {
@@ -35,7 +37,7 @@ public class LedgerEntity {
         return this.userId;
     }
 
-    public Map<CoinType,BigDecimal> getAssets() {
+    public Map<CoinType, BigDecimal> getAssets() {
         return new HashMap<>(this.assets);
     }
 }

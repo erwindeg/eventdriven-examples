@@ -24,6 +24,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,8 @@ public class MarketServiceTest {
     private static final String MOCK_MARKETS_URL = "http://localhost:8099";
     private static final String MOCK_RESPONSE_BODY1 = "{ \"status\": \"success\", \"data\": { \"base\": { \"symbol\": \"USD\", \"sign\": \"$\" }, \"coin\": { \"id\": 2, \"slug\": \"bitcoin-btc\", \"symbol\": \"BTC\", \"name\": \"Bitcoin\", \"price\": \"3320.4729487729\" } } }";
     private static final String MOCK_RESPONSE_BODY2 = "{ \"status\": \"success\", \"data\": { \"base\": { \"symbol\": \"USD\", \"sign\": \"$\" }, \"coin\": { \"id\": 2, \"slug\": \"ethereum-eth\", \"symbol\": \"ETH\", \"name\": \"Ethereum\", \"price\": \"140.4729487729\" } } }";
+    private static final CoinDto COIN_BTC = new CoinDto("BTC", BigDecimal.valueOf(3320.4729487729));
+    private static final CoinDto COIN_ETH = new CoinDto("ETH", BigDecimal.valueOf(140.4729487729));
 
     @Rule
     public WireMockRule wireMockRule = new WireMockRule(8099);
@@ -49,7 +52,7 @@ public class MarketServiceTest {
 
     @Before
     public void setup() {
-        CoinrankingClient coinrankingClient = new CoinrankingClient(MOCK_MARKETS_URL);
+        CoinRankingClient coinrankingClient = new CoinRankingClient(MOCK_MARKETS_URL);
         marketService = new MarketService(queryUpdateEmitter, coinrankingClient);
         createMarketsStub();
     }
@@ -93,7 +96,7 @@ public class MarketServiceTest {
         List<CoinDto> coins = response.collectList().block();
         assertNotNull(coins);
         assertEquals(2, coins.size());
-        //TODO: check coins contains in any order
+        assertThat(coins).containsExactlyInAnyOrder(COIN_BTC, COIN_ETH);
     }
 
 

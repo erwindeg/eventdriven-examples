@@ -4,13 +4,13 @@ services:
     image: axoniq/axonserver
     container_name: axon-server
     ports:
-    - 8024:8024
-    - 8124:8124
+      - 8024:8024
+      - 8124:8124
     networks:
-    - axonnet
-    - default
+      - axonnet
+      - default
     volumes:
-    - ./temp:/opt/axonserver/data
+      - ./temp:/opt/axonserver/data
 
 networks:
   axonnet:
