@@ -47,7 +47,7 @@ public class MarketController {
      *
      */
     @GetMapping
-    // Exercise 5
+    // FIXME Exercise 5
     public Mono<ResponseEntity<List<CoinDto>>> getMarket() {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinsQuery(Arrays.asList("1", "2")), CoinDto.class, CoinDto.class);
 

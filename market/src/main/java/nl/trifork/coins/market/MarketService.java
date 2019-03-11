@@ -44,7 +44,7 @@ public class MarketService {
     }
 
     @QueryHandler
-    //Exercise 4: add the doOnComplete
+    //FIXME Exercise 4: add the doOnComplete
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
         retrieveMultipleCoinsData(getCoinsQuery.getIds())
