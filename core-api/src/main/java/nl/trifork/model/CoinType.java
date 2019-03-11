@@ -14,6 +14,4 @@ public enum CoinType {
     public String getCoinId() {
         return coinId;
     }
-
-
 }

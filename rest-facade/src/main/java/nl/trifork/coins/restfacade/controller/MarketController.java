@@ -70,7 +70,7 @@ public class MarketController {
     }
 
     @GetMapping("/{coinId}")
-    // Exercise 2
+    //Exercise 2: map the response from the "updates" Flux to the correct response of this method
     public Mono<ResponseEntity<CoinDto>> getCoin(@PathVariable CoinType coinType) {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery(coinType), CoinDto.class, CoinDto.class);
 

@@ -24,11 +24,11 @@ public class MarketService {
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketService.class);
 
     private final QueryUpdateEmitter queryUpdateEmitter;
-    private final CoinRankingClient coinrankingClient;
+    private final CoinRankingClient coinRankingClient;
 
-    public MarketService(QueryUpdateEmitter queryUpdateEmitter, CoinRankingClient coinrankingClient) {
+    public MarketService(QueryUpdateEmitter queryUpdateEmitter, CoinRankingClient coinRankingClient) {
         this.queryUpdateEmitter = queryUpdateEmitter;
-        this.coinrankingClient = coinrankingClient;
+        this.coinRankingClient = coinRankingClient;
     }
 
     @QueryHandler
@@ -53,21 +53,20 @@ public class MarketService {
         return new CoinDto(null, null);
     }
 
-
+    //Exercise 1: uncomment the toCoinDtoMono call and implement it
     public Mono<CoinDto> retrieveSingleCoinData(CoinType coinType) {
-        return toCoinDtoMono(coinrankingClient.getCoinInformation(coinType));
+        return toCoinDtoMono(coinRankingClient.getCoinInformation(coinType));
     }
 
     public Mono<CoinDto> retrieveSingleCoinDataWithBaseCurrency(CoinType fromCurrency, CoinType toCurrency) {
-        return toCoinDtoMono(coinrankingClient.getCoinInformationWithBaseCurrency(fromCurrency, toCurrency));
+        return toCoinDtoMono(coinRankingClient.getCoinInformationWithBaseCurrency(fromCurrency, toCurrency));
     }
 
-    //Exercise 3: implement
+    //Exercise 3: we can call the retrieveSingleCoinData multiple times to return a Flux
     public Flux<CoinDto> retrieveMultipleCoinsData(List<CoinType> coinTypes) {
         return Flux.fromIterable(coinTypes).flatMap(this::retrieveSingleCoinData);
     }
 
-    //Exercise 1: implement this method
     private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
         return coinInfo.flatMap(response -> response.bodyToMono(HashMap.class)
                 .map(result -> (Map) result.get("data"))
