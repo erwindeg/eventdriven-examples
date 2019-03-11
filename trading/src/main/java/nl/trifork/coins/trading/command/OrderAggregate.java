@@ -1,6 +1,7 @@
 package nl.trifork.coins.trading.command;
 
 import nl.trifork.coins.coreapi.*;
+import nl.trifork.model.CoinType;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventsourcing.EventSourcingHandler;
 import org.axonframework.modelling.command.AggregateIdentifier;
@@ -17,8 +18,8 @@ public class OrderAggregate {
     @AggregateIdentifier
     private String id;
     private String userId;
-    private String fromCurrency;
-    private String toCurrency;
+    private CoinType fromCurrency;
+    private CoinType toCurrency;
     private BigDecimal amount;
     private BigDecimal price;
     private OrderStatus status;

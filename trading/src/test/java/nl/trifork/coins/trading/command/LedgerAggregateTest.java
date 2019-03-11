@@ -1,5 +1,6 @@
 package nl.trifork.coins.trading.command;
 
+import nl.trifork.model.CoinType;
 import nl.trifork.coins.coreapi.CreateLedgerCommand;
 import nl.trifork.coins.coreapi.LedgerCreatedEvent;
 import nl.trifork.coins.coreapi.LedgerMutatedEvent;
@@ -23,8 +24,8 @@ public class LedgerAggregateTest {
 
     @Test
     public void createLedger() {
-        Map<String, BigDecimal> assets = new HashMap<>();
-        assets.put("EUR",new BigDecimal("10000"));
+        Map<CoinType, BigDecimal> assets = new HashMap<>();
+        assets.put(CoinType.EUR,new BigDecimal("10000"));
         fixture.givenNoPriorActivity()
                 .when(new CreateLedgerCommand("test"))
                 .expectEvents(new LedgerCreatedEvent("test",assets));
@@ -32,11 +33,11 @@ public class LedgerAggregateTest {
 
     @Test
     public void executeMutation() {
-        Map<String, BigDecimal> assets = new HashMap<>();
-        assets.put("EUR",new BigDecimal("9999"));
-        assets.put("BTC",new BigDecimal("10"));
+        Map<CoinType, BigDecimal> assets = new HashMap<>();
+        assets.put(CoinType.EUR,new BigDecimal("9999"));
+        assets.put(CoinType.BTC,new BigDecimal("10"));
         fixture.givenCommands(new CreateLedgerCommand("test"))
-                .when(new MutateLedgerCommand("test","EUR",BigDecimal.ONE,"BTC",BigDecimal.TEN))
+                .when(new MutateLedgerCommand("test",CoinType.EUR,BigDecimal.ONE,CoinType.BTC,BigDecimal.TEN))
                 .expectEvents(new LedgerMutatedEvent("test",assets));
     }
 }

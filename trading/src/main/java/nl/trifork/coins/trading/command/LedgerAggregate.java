@@ -1,5 +1,6 @@
 package nl.trifork.coins.trading.command;
 
+import nl.trifork.model.CoinType;
 import nl.trifork.coins.coreapi.CreateLedgerCommand;
 import nl.trifork.coins.coreapi.LedgerCreatedEvent;
 import nl.trifork.coins.coreapi.LedgerMutatedEvent;
@@ -24,15 +25,16 @@ public class LedgerAggregate {
 
     @AggregateIdentifier
     private String userId;
-    private Map<String, BigDecimal> assets;
+    private Map<CoinType, BigDecimal> assets;
 
-    public LedgerAggregate(){}
+    public LedgerAggregate() {
+    }
 
     @CommandHandler
     public LedgerAggregate(CreateLedgerCommand command) {
         LOGGER.info("Creating ledger for user {}",command.getUserId());
-        Map<String, BigDecimal> newAssets = new HashMap<>();
-        newAssets.put("EUR", new BigDecimal("10000"));
+        Map<CoinType, BigDecimal> newAssets = new HashMap<>();
+        newAssets.put(CoinType.EUR, new BigDecimal("10000"));
         apply(new LedgerCreatedEvent(command.getUserId(),newAssets));
     }
 
@@ -50,10 +52,10 @@ public class LedgerAggregate {
         }
 
         BigDecimal toCurrencyAmount = assets.get(command.getToCurrency()) != null ? assets.get(command.getToCurrency()) : BigDecimal.ZERO;
-        Map<String, BigDecimal> mutatedAssets = new HashMap<>(assets);
+        Map<CoinType, BigDecimal> mutatedAssets = new HashMap<>(assets);
         mutatedAssets.put(command.getFromCurrency(), fromCurrencyAmount.subtract(command.getFromAmount()));
         mutatedAssets.put(command.getToCurrency(), toCurrencyAmount.add(command.getToAmount()));
-        apply(new LedgerMutatedEvent(this.userId,mutatedAssets));
+        apply(new LedgerMutatedEvent(this.userId, mutatedAssets));
     }
 
     @EventSourcingHandler

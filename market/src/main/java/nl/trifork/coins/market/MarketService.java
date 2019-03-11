@@ -3,15 +3,13 @@ package nl.trifork.coins.market;
 import nl.trifork.coins.coreapi.CoinDto;
 import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetCoinsQuery;
+import nl.trifork.model.CoinType;
 import org.axonframework.queryhandling.QueryHandler;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.ClientResponse;
-import org.springframework.web.util.UriComponentsBuilder;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -20,30 +18,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.springframework.web.reactive.function.client.WebClient.create;
-
 @Service
 public class MarketService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MarketService.class);
 
-    @Autowired
-    QueryUpdateEmitter queryUpdateEmitter;
-    String baseUrl = "https://api.coinranking.com/v1/public/coin/";
+    private final QueryUpdateEmitter queryUpdateEmitter;
+    private final CoinrankingClient coinrankingClient;
 
-    public MarketService() {
-    }
-
-    public MarketService(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public MarketService(QueryUpdateEmitter queryUpdateEmitter, CoinrankingClient coinrankingClient) {
+        this.queryUpdateEmitter = queryUpdateEmitter;
+        this.coinrankingClient = coinrankingClient;
     }
 
     @QueryHandler
     public CoinDto query(GetCoinQuery getCoinQuery) {
-        LOGGER.info("GetCoinQuery {}", getCoinQuery.getId());
-        retrieveSingleCoinData(getCoinQuery.getId()).subscribe(
+        LOGGER.info("GetCoinQuery {}", getCoinQuery.getCoinType().name());
+        retrieveSingleCoinData(getCoinQuery.getCoinType()).subscribe(
                 coin -> this.queryUpdateEmitter.emit(GetCoinQuery.class, query -> true, coin),
-                error -> this.queryUpdateEmitter.completeExceptionally(GetCoinQuery.class, query -> getCoinQuery.getId().equals(query.getId()), error));
+                error -> this.queryUpdateEmitter.completeExceptionally(GetCoinQuery.class, query -> getCoinQuery.getCoinType().equals(query.getCoinType()), error));
         return new CoinDto(null, null);
     }
 
@@ -61,25 +54,24 @@ public class MarketService {
     }
 
 
+    public Mono<CoinDto> retrieveSingleCoinData(CoinType coinType) {
+        return toCoinDtoMono(coinrankingClient.getCoinInformation(coinType));
+    }
+
+    public Mono<CoinDto> retrieveSingleCoinDataWithBaseCurrency(CoinType fromCurrency, CoinType toCurrency) {
+        return toCoinDtoMono(coinrankingClient.getCoinInformationWithBaseCurrency(fromCurrency, toCurrency));
+    }
+
     //Exercise 1: implement this method
-    public Mono<CoinDto> retrieveSingleCoinData(String coinId) {
-        return callExternalService(coinId)
-                .flatMap(response -> response.bodyToMono(HashMap.class)
-                        .map(result -> (Map) result.get("data"))
-                        .map(data -> (Map) data.get("coin"))
-                        .map(coin -> new CoinDto((String) coin.get("symbol"), new BigDecimal((String) coin.get("price")))));
+    private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
+        return coinInfo.flatMap(response -> response.bodyToMono(HashMap.class)
+                .map(result -> (Map) result.get("data"))
+                .map(data -> (Map) data.get("coin"))
+                .map(coin -> new CoinDto((String) coin.get("symbol"), new BigDecimal((String) coin.get("price")))));
     }
 
     //Exercise 3: implement
-    public Flux<CoinDto> retrieveMultipleCoinsData(List<String> coinIds) {
-        return Flux.fromIterable(coinIds)
-                .flatMap(coinId -> retrieveSingleCoinData(coinId));
+    public Flux<CoinDto> retrieveMultipleCoinsData(List<CoinType> coinTypes) {
+        return Flux.fromIterable(coinTypes).flatMap(this::retrieveSingleCoinData);
     }
-
-    private Mono<ClientResponse> callExternalService(String coinId) {
-        return create().get().uri(UriComponentsBuilder.fromHttpUrl(this.baseUrl).path(coinId).build().toUri())
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange();
-    }
-
 }

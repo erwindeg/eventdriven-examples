@@ -1,7 +1,9 @@
 package nl.trifork.coins.coreapi
 
-data class GetCoinQuery(val id: String)
-data class GetCoinsQuery(val ids: List<String>)
+import nl.trifork.model.CoinType
+
+data class GetCoinQuery(val coinType: CoinType)
+data class GetCoinsQuery(val ids: List<CoinType>)
 data class GetQuoteQuery(val id: String)
 data class GetQuoteResponse(val quote : QuoteDto)
 data class GetOrderQuery(val id: String)

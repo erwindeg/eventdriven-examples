@@ -33,7 +33,7 @@ public class QuoteService {
     public void generateQuote(GenerateQuoteCommand command) {
         LOGGER.info("GenerateQuoteCommand {}",command);
         this.marketService
-                .retrieveSingleCoinData(command.getId())
+                .retrieveSingleCoinDataWithBaseCurrency(command.getFromCurrency(), command.getToCurrency())
                 .map(CoinDto::getPrice)
                 .doOnError(throwable ->
                         this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), throwable))))

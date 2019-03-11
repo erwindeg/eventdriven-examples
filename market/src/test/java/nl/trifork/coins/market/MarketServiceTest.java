@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import nl.trifork.coins.coreapi.CoinDto;
 import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetCoinsQuery;
+import nl.trifork.model.CoinType;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.junit.Before;
 import org.junit.Rule;
@@ -48,8 +49,8 @@ public class MarketServiceTest {
 
     @Before
     public void setup() {
-        this.marketService.baseUrl = MOCK_MARKETS_URL;
-        this.marketService.queryUpdateEmitter = queryUpdateEmitter;
+        CoinrankingClient coinrankingClient = new CoinrankingClient(MOCK_MARKETS_URL);
+        marketService = new MarketService(queryUpdateEmitter, coinrankingClient);
         createMarketsStub();
     }
 
@@ -76,7 +77,7 @@ public class MarketServiceTest {
      */
     @Test
     public void shouldReturnSingleCoinDataOnValidResponse() {
-        Mono<CoinDto> response = marketService.retrieveSingleCoinData("1");
+        Mono<CoinDto> response = marketService.retrieveSingleCoinData(CoinType.BTC);
         CoinDto coin = response.block();
         assertNotNull(coin);
         assertEquals("BTC", coin.getCurrency());
@@ -88,7 +89,7 @@ public class MarketServiceTest {
      */
     @Test
     public void shouldReturnMultipleCoinsDataOnValidResponses() {
-        Flux<CoinDto> response = marketService.retrieveMultipleCoinsData(Arrays.asList("1", "2"));
+        Flux<CoinDto> response = marketService.retrieveMultipleCoinsData(Arrays.asList(CoinType.BTC, CoinType.ETH));
         List<CoinDto> coins = response.collectList().block();
         assertNotNull(coins);
         assertEquals(2, coins.size());
@@ -98,13 +99,13 @@ public class MarketServiceTest {
 
     @Test
     public void shouldEmitItes() {
-        marketService.query(new GetCoinQuery("1"));
+        marketService.query(new GetCoinQuery(CoinType.BTC));
         verify(queryUpdateEmitter, timeout(1000).times(1)).emit(eq(GetCoinQuery.class), any(), any(CoinDto.class));
     }
 
     @Test
     public void shouldEmitItems() {
-        marketService.queryAll(new GetCoinsQuery(Arrays.asList("1", "2")));
+        marketService.queryAll(new GetCoinsQuery(Arrays.asList(CoinType.BTC, CoinType.ETH)));
         verify(queryUpdateEmitter, timeout(1000).times(2)).emit(eq(GetCoinsQuery.class), any(), any(CoinDto.class));
         verify(queryUpdateEmitter, timeout(1000).times(1)).complete(eq(GetCoinsQuery.class), any());
     }

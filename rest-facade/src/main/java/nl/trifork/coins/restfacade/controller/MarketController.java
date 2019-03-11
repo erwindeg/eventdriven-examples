@@ -4,6 +4,7 @@ package nl.trifork.coins.restfacade.controller;
 import java.util.Arrays;
 import java.util.List;
 import nl.trifork.coins.coreapi.CoinDto;
+import nl.trifork.model.CoinType;
 import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetCoinsQuery;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -11,7 +12,6 @@ import org.axonframework.queryhandling.QueryGateway;
 import org.axonframework.queryhandling.SubscriptionQueryResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -49,7 +49,7 @@ public class MarketController {
     @GetMapping
     // Exercise 5
     public Mono<ResponseEntity<List<CoinDto>>> getMarket() {
-        SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinsQuery(Arrays.asList("1", "2")), CoinDto.class, CoinDto.class);
+        SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinsQuery(Arrays.asList(CoinType.BTC, CoinType.ETH)), CoinDto.class, CoinDto.class);
 
         //We have to call initialResult() to fire the QueryHandler in MarketService. We subscribe to the updates() to receive
         //the data which is emitted through the QueryUpdateEmitter in MarketService
@@ -70,8 +70,8 @@ public class MarketController {
 
     @GetMapping("/{coinId}")
     // Exercise 2
-    public Mono<ResponseEntity<CoinDto>> getCoin(@PathVariable String coinId) {
-        SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery(coinId), CoinDto.class, CoinDto.class);
+    public Mono<ResponseEntity<CoinDto>> getCoin(@PathVariable CoinType coinType) {
+        SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinQuery(coinType), CoinDto.class, CoinDto.class);
 
         //We have to call initialResult() to fire the QueryHandler in MarketService. We subscribe to the updates() to receive
         //the data which is emitted through the QueryUpdateEmitter in MarketService
