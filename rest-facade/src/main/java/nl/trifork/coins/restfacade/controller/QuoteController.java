@@ -3,6 +3,7 @@ package nl.trifork.coins.restfacade.controller;
 import nl.trifork.coins.coreapi.GenerateQuoteCommand;
 import nl.trifork.coins.coreapi.GetQuoteQuery;
 import nl.trifork.coins.coreapi.GetQuoteResponse;
+import nl.trifork.coins.coreapi.QuoteDto;
 import nl.trifork.coins.coreapi.QuoteRequestDto;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.queryhandling.QueryGateway;
@@ -37,7 +38,7 @@ public class QuoteController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<GetQuoteResponse>> generateQuote(@RequestBody QuoteRequestDto quoteRequestDto) {
+    public Mono<ResponseEntity<QuoteDto>> generateQuote(@RequestBody QuoteRequestDto quoteRequestDto) {
         String id = UUID.randomUUID().toString();
         Flux<GetQuoteResponse> quoteResponseFlux = this.queryGateway.subscriptionQuery(new GetQuoteQuery(id), GetQuoteResponse.class, GetQuoteResponse.class).updates();
 
@@ -45,6 +46,7 @@ public class QuoteController {
 
         return quoteResponseFlux
                 .next()
+                .map(quoteResponse -> quoteResponse.getQuote())
                 .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))
                 .onErrorReturn(status(INTERNAL_SERVER_ERROR).build());
