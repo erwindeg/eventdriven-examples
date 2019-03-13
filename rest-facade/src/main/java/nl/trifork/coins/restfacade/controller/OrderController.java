@@ -37,10 +37,11 @@ public class OrderController {
 
     @PostMapping
     public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody OrderRequestDto orderRequest) {
-
-        return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderRequest.getQuoteId() + "_order", orderRequest.getUserId())))
+        String orderId = orderRequest.getQuoteId()+"_order";
+        LOGGER.info("Executing order {}",orderId);
+        return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId())))
                 .onErrorReturn(status(NOT_FOUND).build())
-                .flatMap(id -> this.queryGateway.subscriptionQuery(new GetOrderQuery(orderRequest.getQuoteId()), OrderDto.class, OrderDto.class).updates().next())
+                .flatMap(id -> this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates().next())
                 .timeout(ofSeconds(3))
                 .map(ResponseEntity::ok)
                 .onErrorReturn(status(INTERNAL_SERVER_ERROR).build());

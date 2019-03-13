@@ -2,7 +2,7 @@ GET http://localhost:8080/market
 
 ###
 
-GET http://localhost:8080/market/1
+GET http://localhost:8080/market/BTC
 
 ###
 
@@ -33,7 +33,7 @@ Content-type: application/json
 }
 
 > {%
-  client.global.set("quoteId", response.body.id);
+  client.global.set("quoteId", response.body.id );
 %}
 
 ###
