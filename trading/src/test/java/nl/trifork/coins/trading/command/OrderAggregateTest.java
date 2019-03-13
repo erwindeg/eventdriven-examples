@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+//These tests should succeed to finish the OrderAggregate exercises
 public class OrderAggregateTest {
 
     private AggregateTestFixture<OrderAggregate> fixture;

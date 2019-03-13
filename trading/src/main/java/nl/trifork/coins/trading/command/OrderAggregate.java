@@ -39,8 +39,9 @@ public class OrderAggregate {
     }
 
     @CommandHandler
+    //FIXME exercise 8: send an event for this command to provide state for this aggregate through event sourcing
     public OrderAggregate(CreateOrderCommand command) {
-        apply(new OrderCreatedEvent(command.getId(), command.getUserId(), command.getFromCurrency(), command.getToCurrency(), command.getAmount(), command.getPrice()));
+
     }
 
     @EventSourcingHandler
@@ -55,14 +56,15 @@ public class OrderAggregate {
     }
 
     @CommandHandler
+    //FIXME exercise 9: validate the command and send an appropriate event or throw an exception
     public void executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
-            throw new IllegalArgumentException("Quote ID is valid not for this user");
+           //TODO: implement
         }
         if (!this.status.equals(CREATED)) {
-            throw new IllegalStateException("The status of this order is not valid");
+            //TODO: implement
         } else {
-            apply(new OrderExecutedEvent(command.getId(), this.userId, this.fromCurrency, this.toCurrency, this.amount, this.price));
+            //TODO: implement
         }
     }
 
@@ -72,11 +74,12 @@ public class OrderAggregate {
     }
 
     @CommandHandler
+    //FIXME exercise 10: validate the command and send an appropriate event or throw an exception
     public void success(SuccessOrderCommand command) {
         if (!this.status.equals(PENDING)) {
-            throw new IllegalStateException("The status of this order is not valid");
+           //TODO: implement
         } else {
-            apply(new OrderSuccessEvent(command.getId()));
+            //TODO: implement
         }
     }
 
