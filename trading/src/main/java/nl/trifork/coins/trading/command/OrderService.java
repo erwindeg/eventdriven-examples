@@ -18,8 +18,8 @@ public class OrderService {
     private CommandGateway commandGateway;
 
     @EventHandler
+    //FIXME exercise 7: We should send a CreateOrderCommand for every generated quote.
     public void createOrder(QuoteGeneratedEvent event) {
         LOGGER.info("Generating Order for quote");
-        this.commandGateway.send(new CreateOrderCommand(event.getId() + "_order", event.getUserId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice()));
     }
 }
