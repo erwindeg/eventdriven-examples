@@ -1,8 +1,6 @@
 package nl.trifork.coins.trading.command;
 
-import nl.trifork.coins.coreapi.FailOrderCommand;
 import nl.trifork.coins.coreapi.LedgerMutatedEvent;
-import nl.trifork.coins.coreapi.MutateLedgerCommand;
 import nl.trifork.coins.coreapi.OrderExecutedEvent;
 import nl.trifork.coins.coreapi.SuccessOrderCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
@@ -13,8 +11,6 @@ import org.axonframework.spring.stereotype.Saga;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static reactor.core.publisher.Mono.fromFuture;
 
 @Saga
 public class OrderSaga {
@@ -27,11 +23,10 @@ public class OrderSaga {
 
     @StartSaga
     @SagaEventHandler(associationProperty = "id")
+    //FIXME exercise 11: When an order is executed, we should try to mutate the ledger, implement the success and failure scenario's
     public void on(OrderExecutedEvent event) {
         this.orderId = event.getId();
-        LOGGER.info("Mutating ledger for user {}", event.getUserId());
-        fromFuture(this.commandGateway.send(new MutateLedgerCommand(event.getUserId(), event.getFromCurrency(), event.getPrice(), event.getToCurrency(), event.getAmount())))
-                .doOnError(error -> this.commandGateway.send(new FailOrderCommand(this.orderId))).subscribe();
+
     }
 
     @EndSaga
