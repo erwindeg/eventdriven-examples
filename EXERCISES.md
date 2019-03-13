@@ -35,3 +35,8 @@ Need to explain when to subscribe and when not!!!
 
 # Order aggregate exercises
 ## Exercise 7
+## Exercise 8
+## Exercise 9
+## Exercise 10
+## Exercise 11
+
