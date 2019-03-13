@@ -1,6 +1,10 @@
 package nl.trifork.coins.trading.command;
 
-import nl.trifork.coins.coreapi.*;
+import nl.trifork.coins.coreapi.FailOrderCommand;
+import nl.trifork.coins.coreapi.LedgerMutatedEvent;
+import nl.trifork.coins.coreapi.MutateLedgerCommand;
+import nl.trifork.coins.coreapi.OrderExecutedEvent;
+import nl.trifork.coins.coreapi.SuccessOrderCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.modelling.saga.EndSaga;
 import org.axonframework.modelling.saga.SagaEventHandler;
@@ -18,21 +22,21 @@ public class OrderSaga {
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderSaga.class);
 
     @Autowired
-    CommandGateway commandGateway;
-    String orderId;
+    private CommandGateway commandGateway;
+    private String orderId;
 
     @StartSaga
     @SagaEventHandler(associationProperty = "id")
     public void on(OrderExecutedEvent event) {
         this.orderId = event.getId();
-        LOGGER.info("Mutating ledger for user {}",event.getUserId());
+        LOGGER.info("Mutating ledger for user {}", event.getUserId());
         fromFuture(this.commandGateway.send(new MutateLedgerCommand(event.getUserId(), event.getFromCurrency(), event.getPrice(), event.getToCurrency(), event.getAmount())))
-        .doOnError(error -> this.commandGateway.send(new FailOrderCommand(this.orderId)));
+                .doOnError(error -> this.commandGateway.send(new FailOrderCommand(this.orderId)));
     }
 
     @EndSaga
     @SagaEventHandler(associationProperty = "userId")
-    public void on(LedgerMutatedEvent event){
+    public void on(LedgerMutatedEvent event) {
         this.commandGateway.send(new SuccessOrderCommand(this.orderId));
     }
 }

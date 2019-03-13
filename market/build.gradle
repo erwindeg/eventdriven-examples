@@ -6,7 +6,6 @@ sourceCompatibility = javaSource
 targetCompatibility = javaTarget
 
 
-
 dependencies {
     compile project(':core-api')
     compile libraries.springBoot

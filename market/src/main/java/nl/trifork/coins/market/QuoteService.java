@@ -1,6 +1,12 @@
 package nl.trifork.coins.market;
 
-import nl.trifork.coins.coreapi.*;
+import nl.trifork.coins.coreapi.CoinDto;
+import nl.trifork.coins.coreapi.GenerateQuoteCommand;
+import nl.trifork.coins.coreapi.GenerateQuoteFailedEvent;
+import nl.trifork.coins.coreapi.GetQuoteQuery;
+import nl.trifork.coins.coreapi.GetQuoteResponse;
+import nl.trifork.coins.coreapi.QuoteDto;
+import nl.trifork.coins.coreapi.QuoteGeneratedEvent;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.EventHandler;
@@ -24,16 +30,15 @@ public class QuoteService {
     @Autowired
     EventBus eventBus;
 
-
     @Autowired
     QueryUpdateEmitter queryUpdateEmitter;
 
     @CommandHandler
-    //Exercise 6: send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
+    //FIXME Exercise 6: send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
     public void generateQuote(GenerateQuoteCommand command) {
-        LOGGER.info("GenerateQuoteCommand {}",command);
+        LOGGER.info("GenerateQuoteCommand {}", command);
         this.marketService
-                .retrieveSingleCoinData(command.getId())
+                .retrieveSingleCoinDataWithBaseCurrency(command.getFromCurrency(), command.getToCurrency())
                 .map(CoinDto::getPrice)
                 .doOnError(throwable ->
                         this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), throwable))))
@@ -43,18 +48,18 @@ public class QuoteService {
 
     @EventHandler
     public void on(QuoteGeneratedEvent event) {
-        LOGGER.info("QuoteGeneratedEvent {}",event);
+        LOGGER.info("QuoteGeneratedEvent {}", event);
         queryUpdateEmitter.emit(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), new GetQuoteResponse(new QuoteDto(event.getId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice())));
     }
 
     @EventHandler
     public void on(GenerateQuoteFailedEvent event) {
-        LOGGER.info("GenerateQuoteFailedEvent {}",event);
+        LOGGER.info("GenerateQuoteFailedEvent {}", event);
         queryUpdateEmitter.completeExceptionally(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), event.getCause());
     }
 
     @QueryHandler
-    public GetQuoteResponse getQuote(GetQuoteQuery query){
+    public GetQuoteResponse getQuote(GetQuoteQuery query) {
         //normally implemented by looking up the quote in the read model
         return new GetQuoteResponse(null);
     }
