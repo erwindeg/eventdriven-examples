@@ -32,3 +32,6 @@ Exercise 4: add the doOnComplete
 # Quote exercises
 ## Exercise 6
 Need to explain when to subscribe and when not!!!
+
+# Order aggregate exercises
+## Exercise 7

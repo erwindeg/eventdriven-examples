@@ -31,7 +31,7 @@ public class OrderSaga {
         this.orderId = event.getId();
         LOGGER.info("Mutating ledger for user {}", event.getUserId());
         fromFuture(this.commandGateway.send(new MutateLedgerCommand(event.getUserId(), event.getFromCurrency(), event.getPrice(), event.getToCurrency(), event.getAmount())))
-                .doOnError(error -> this.commandGateway.send(new FailOrderCommand(this.orderId)));
+                .doOnError(error -> this.commandGateway.send(new FailOrderCommand(this.orderId))).subscribe();
     }
 
     @EndSaga
