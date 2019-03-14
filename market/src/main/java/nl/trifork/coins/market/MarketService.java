@@ -69,8 +69,12 @@ public class MarketService {
 
     private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
         return coinInfo.flatMap(response -> response.bodyToMono(HashMap.class)
-                .map(result -> (Map) result.get("data"))
-                .map(data -> (Map) data.get("coin"))
-                .map(coin -> new CoinDto((String) coin.get("symbol"), new BigDecimal((String) coin.get("price")))));
+                .map(this::parseResponseBody));
+    }
+
+    private CoinDto parseResponseBody(HashMap result) {
+        Map data = (Map) result.get("data");
+        Map coinData = (Map)data.get("coin");
+        return new CoinDto((String) coinData.get("symbol"), new BigDecimal((String) coinData.get("price")));
     }
 }

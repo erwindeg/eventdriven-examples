@@ -15,8 +15,8 @@ Users shouldn't have to make modules, only code + tests
 nl.trifork.coins.market.MarketService.retrieveMarketData
 Exercise 1: uncomment the callExternalService call and map the response to a CoinDto
 Hints: 
-(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-)
-(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#map-java.util.function.Function-)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html#flatMap-java.util.function.Function-)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Mono.html#map-java.util.function.Function-)
 
 
 ## Exercise 2
