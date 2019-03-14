@@ -41,7 +41,7 @@ public class MarketService {
     }
 
     @QueryHandler
-    //Exercise 4: add the doOnComplete
+    //Exercise 4:
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
         retrieveMultipleCoinsData(getCoinsQuery.getIds())
@@ -53,7 +53,7 @@ public class MarketService {
         return new CoinDto(null, null);
     }
 
-    //Exercise 1: uncomment the toCoinDtoMono call and implement it
+    //Exercise 1:
     public Mono<CoinDto> retrieveSingleCoinData(CoinType coinType) {
         return toCoinDtoMono(coinRankingClient.getCoinInformation(coinType));
     }
