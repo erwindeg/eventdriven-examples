@@ -14,20 +14,35 @@ Users shouldn't have to make modules, only code + tests
 ## Exercise 1
 nl.trifork.coins.market.MarketService.retrieveMarketData
 Exercise 1: uncomment the callExternalService call and map the response to a CoinDto
+Hints: 
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#map-java.util.function.Function-)
+
 
 ## Exercise 2
 nl.trifork.coins.restfacade.controller.MarketController
 Exercise 2: map the response from the "updates" Flux to the correct response of this method
+Hints:
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#next--)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#timeout-java.time.Duration-)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#doOnError-java.lang.Class-java.util.function.Consumer-)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#onErrorReturn-java.lang.Class-T-)
 
 ## Exercise 3
 nl.trifork.coins.market.MarketService.retrieveMarketData
 Exercise 3: we can call the retrieveSingleCoinData multiple times to return a Flux
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#fromIterable-java.lang.Iterable-)
 
 ## Exercise 4
 nl.trifork.coins.market.MarketService.retrieveMarketData
-Exercise 4: add the doOnComplete
+Exercise 4: Subscribe to the Flux and emit each item using the queryUpdateEmitter. Don't forget to handle the exceptions. Additionally we should signal when we are done emitting items.
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#doOnComplete-java.lang.Runnable-)
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#subscribe-org.reactivestreams.Subscriber-)
 
 ## Exercise 5
+nl.trifork.coins.restfacade.controller.MarketController.getMarket
+Exercise 5: map the response from the "updates" Flux to the correct response of this method
+(https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#collectList--)
 
 # Quote exercises
 ## Exercise 6

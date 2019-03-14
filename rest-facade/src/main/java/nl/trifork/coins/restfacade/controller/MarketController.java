@@ -48,7 +48,7 @@ public class MarketController {
      *
      */
     @GetMapping
-    // FIXME Exercise 5
+    // FIXME Exercise 5: map the response from the "updates" Flux to the correct response of this method
     public Mono<ResponseEntity<List<CoinDto>>> getMarket() {
         SubscriptionQueryResult<CoinDto, CoinDto> query = this.queryGateway.subscriptionQuery(new GetCoinsQuery(Arrays.asList(CoinType.BTC, CoinType.ETH)), CoinDto.class, CoinDto.class);
 
@@ -61,12 +61,7 @@ public class MarketController {
         //specify a timeout of 3 seconds, to  make sure this method doesn't wait forever when no data is emitted
         //when the timeout expires, an exception is thrown.
         //use a map to return a ResponseEntity, use onErrorReturn to return 404 not found in case of an error.
-        return updates
-                .collectList()
-                .map(ResponseEntity::ok)
-                .timeout(ofSeconds(3))
-                .doOnError(error -> LOGGER.error("{}", error))
-                .onErrorReturn(new ResponseEntity(NOT_FOUND));
+        return Mono.empty();
     }
 
     @GetMapping("/{coinId}")
