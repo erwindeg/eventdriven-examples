@@ -72,9 +72,6 @@ public class MarketServiceTest {
                         .withStatus(200)));
     }
 
-
-    //TODO: test error cases
-
     /*
      * This test must pass to complete Exercise 1
      */
@@ -101,7 +98,7 @@ public class MarketServiceTest {
 
 
     @Test
-    public void shouldEmitItes() {
+    public void shouldEmitItem() {
         marketService.query(new GetCoinQuery(CoinType.BTC));
         verify(queryUpdateEmitter, timeout(1000).times(1)).emit(eq(GetCoinQuery.class), any(), any(CoinDto.class));
     }
