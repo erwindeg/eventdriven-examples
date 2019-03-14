@@ -10,4 +10,4 @@ data class CreateOrderCommand(@TargetAggregateIdentifier val id: String, val use
 data class ExecuteOrderCommand(@TargetAggregateIdentifier val id: String, val userId: String)
 data class SuccessOrderCommand(@TargetAggregateIdentifier val id: String)
 data class FailOrderCommand(@TargetAggregateIdentifier val id: String)
-data class MutateLedgerCommand(@TargetAggregateIdentifier val userId: String, val fromCurrency: CoinType, val fromAmount: BigDecimal, val toCurrency: CoinType, val toAmount: BigDecimal)
+data class MutateLedgerCommand(@TargetAggregateIdentifier val userId: String, val orderId : String, val fromCurrency: CoinType, val fromAmount: BigDecimal, val toCurrency: CoinType, val toAmount: BigDecimal)

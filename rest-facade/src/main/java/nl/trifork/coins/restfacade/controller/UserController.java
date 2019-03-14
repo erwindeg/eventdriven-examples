@@ -44,7 +44,7 @@ public class UserController {
         CompletableFuture<Object> completableFuture = commandGateway.send(new CreateLedgerCommand(userRequest.getUserId()));
 
         return fromFuture(completableFuture)
-                .map(id -> created(uriComponentsBuilder.path("/user/{id}").buildAndExpand(id).toUri()))
+                .map(id -> created(uriComponentsBuilder.path("/user/{orderId}").buildAndExpand(id).toUri()))
                 .onErrorReturn(status(CONFLICT))
                 .map(ResponseEntity.HeadersBuilder::build);
     }
