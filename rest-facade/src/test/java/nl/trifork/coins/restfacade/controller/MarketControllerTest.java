@@ -22,6 +22,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/*
+ * These tests must pass to complete Exercise 2
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class MarketControllerTest {
 
