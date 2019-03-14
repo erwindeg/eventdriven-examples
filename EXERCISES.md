@@ -13,7 +13,7 @@ Users shouldn't have to make modules, only code + tests
 # Market exercises
 ## Exercise 1
 nl.trifork.coins.market.MarketService.retrieveMarketData
-Exercise 1: uncomment the callExternalService call and map the response to a CoinDto
+Exercise 1: uncomment the toCoinDtoMono call and implement it
 Hints: 
 (https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#flatMap-java.util.function.Function-)
 (https://projectreactor.io/docs/core/release/api/reactor/core/publisher/Flux.html#map-java.util.function.Function-)
