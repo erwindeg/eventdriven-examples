@@ -13,7 +13,10 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MarketService {
@@ -65,5 +68,11 @@ public class MarketService {
 
     private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
         return Mono.empty();
+    }
+
+    private CoinDto parseResponseBody(HashMap result) {
+        Map data = (Map) result.get("data");
+        Map coinData = (Map)data.get("coin");
+        return new CoinDto((String) coinData.get("symbol"), new BigDecimal((String) coinData.get("price")));
     }
 }
