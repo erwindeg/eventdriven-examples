@@ -42,12 +42,7 @@ public class MarketService {
     //are done emitting items.
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
-        retrieveMultipleCoinsData(getCoinsQuery.getIds())
-                .doOnComplete(() -> this.queryUpdateEmitter.complete(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds())))
-                .subscribe(
-                        coin -> this.queryUpdateEmitter.emit(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds()), coin),
-                        error -> this.queryUpdateEmitter.completeExceptionally(GetCoinsQuery.class, query -> true, error)
-                );
+        retrieveMultipleCoinsData(getCoinsQuery.getIds());
         return new CoinDto(null, null);
     }
 
