@@ -1,6 +1,5 @@
 package nl.trifork.coins.trading.command;
 
-import nl.trifork.coins.coreapi.CreateOrderCommand;
 import nl.trifork.coins.coreapi.QuoteGeneratedEvent;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.axonframework.eventhandling.EventHandler;
@@ -18,7 +17,7 @@ public class OrderService {
     private CommandGateway commandGateway;
 
     @EventHandler
-    //FIXME exercise 7: We should send a CreateOrderCommand for every generated quote.
+    //FIXME Exercise 7: We should send a CreateOrderCommand for every generated quote.
     public void createOrder(QuoteGeneratedEvent event) {
         LOGGER.info("Generating Order for quote");
     }

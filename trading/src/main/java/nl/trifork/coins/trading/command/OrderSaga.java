@@ -23,7 +23,7 @@ public class OrderSaga {
 
     @StartSaga
     @SagaEventHandler(associationProperty = "id")
-    //FIXME exercise 11: When an order is executed, we should try to mutate the ledger, implement the success and failure scenario's
+    //FIXME Exercise 11: When an order is executed, we should try to mutate the ledger, implement the success and failure scenario's
     public void on(OrderExecutedEvent event) {
         this.orderId = event.getId();
 

@@ -46,12 +46,28 @@ Exercise 5: map the response from the "updates" Flux to the correct response of 
 
 # Quote exercises
 ## Exercise 6
-Need to explain when to subscribe and when not!!!
+nl.trifork.coins.market.QuoteService.generateQuote
+Exercise 6: subcribe to the result of retrieveSingleCoinDataWithBaseCurrency and the send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
 
 # Order aggregate exercises
 ## Exercise 7
-## Exercise 8
-## Exercise 9
-## Exercise 10
-## Exercise 11
+nl.trifork.coins.trading.command.OrderService.createOrder
+Exercise 7: We should send a CreateOrderCommand for every generated quote.
+(https://docs.axoniq.io/reference-guide/implementing-domain-logic/command-handling/aggregate)
 
+## Exercise 8
+nl.trifork.coins.trading.command.OrderAggregate.OrderAggregate(nl.trifork.coins.coreapi.CreateOrderCommand)
+Exercise 8: send an event for this command to provide state for this aggregate through event sourcing
+
+## Exercise 9
+nl.trifork.coins.trading.command.OrderAggregate.executeOrder
+Exercise 9: validate the command and send an appropriate event or throw an exception
+
+## Exercise 10
+nl.trifork.coins.trading.command.OrderAggregate.success
+Exercise 10: validate the command and send an appropriate event or throw an exception
+
+## Exercise 11
+nl.trifork.coins.trading.command.OrderSaga.on(nl.trifork.coins.coreapi.OrderExecutedEvent)
+Exercise 11: When an order is executed, we should try to mutate the ledger, implement the success and failure scenario's
+(https://docs.axoniq.io/reference-guide/implementing-domain-logic/complex-business-transactions/implementing-saga)

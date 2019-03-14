@@ -39,7 +39,7 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    //FIXME exercise 8: send an event for this command to provide state for this aggregate through event sourcing
+    //FIXME Exercise 8: send an event for this command to provide state for this aggregate through event sourcing
     public OrderAggregate(CreateOrderCommand command) {
 
     }
@@ -56,7 +56,7 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    //FIXME exercise 9: validate the command and send an appropriate event or throw an exception
+    //FIXME Exercise 9: validate the command and send an appropriate event or throw an exception
     public void executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
            //TODO: implement
@@ -74,7 +74,7 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    //FIXME exercise 10: validate the command and send an appropriate event or throw an exception
+    //FIXME Exercise 10: validate the command and send an appropriate event or throw an exception
     public void success(SuccessOrderCommand command) {
         if (!this.status.equals(PENDING)) {
            //TODO: implement
