@@ -52,8 +52,7 @@ public class MarketService {
     //FIXME Exercise 1: uncomment the toCoinDtoMono call and implement it
     //Hints: You need to map the response
     public Mono<CoinDto> retrieveSingleCoinData(CoinType coinType) {
-        return Mono.empty();
-//        return toCoinDtoMono(coinRankingClient.getCoinInformation(coinType));
+        return toCoinDtoMono(coinRankingClient.getCoinInformation(coinType));
     }
 
     public Mono<CoinDto> retrieveSingleCoinDataWithBaseCurrency(CoinType fromCurrency, CoinType toCurrency) {
@@ -67,6 +66,7 @@ public class MarketService {
     }
 
     private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
+        //return coinInfo.flatMap(response -> response.bodyToMono(HashMap.class));
         return Mono.empty();
     }
 
