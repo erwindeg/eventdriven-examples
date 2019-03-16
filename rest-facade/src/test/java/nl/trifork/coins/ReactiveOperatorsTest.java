@@ -20,8 +20,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class ReactiveOperatorsTest {
 
-    //Mono, Flux, map, subscribe, flatMap, timout, onErrorReturn, filter
-
     @Mock
     Consumer consumer;
 
@@ -39,18 +37,6 @@ public class ReactiveOperatorsTest {
         verify(consumer, times(1)).accept(any(Integer.class));
     }
 
-    /*
-     * Mono map()
-     * */
-    @Test
-    public void mapShouldConvertIntToString() {
-        Mono<Integer> intMono = Mono.just(1);
-        intMono
-                .map(item -> "Number: "+item)
-                .subscribe(consumer);
-
-        verify(consumer, times(1)).accept(any(String.class));
-    }
 
     /*
      * Flux subscribe()
@@ -66,6 +52,20 @@ public class ReactiveOperatorsTest {
     }
 
     /*
+     * Mono map()
+     * */
+    @Test
+    public void mapShouldConvertIntToString() {
+        Mono<Integer> intMono = Mono.just(1);
+        intMono
+                .map(item -> "Number: "+item)
+                .subscribe(consumer);
+
+        verify(consumer, times(1)).accept(any(String.class));
+    }
+
+
+    /*
      * Flux map()
      * */
     @Test
@@ -78,6 +78,35 @@ public class ReactiveOperatorsTest {
 
         verify(consumer, times(10)).accept(any(String.class));
     }
+
+    /*
+     * Flux map()
+     * */
+    @Test
+    public void mapShouldCalculateValues() {
+        Flux<Integer> rangeFlux = Flux.range(0,10);
+        rangeFlux
+                .map(this::someSuperFastCalculation)
+                .doOnEach(value -> System.out.println(value))
+                .subscribe(consumer);
+
+        verify(consumer, times(10)).accept(any(Integer.class));
+    }
+
+    /*
+     * Flux flatMap()
+     * */
+    @Test
+    public void flatMapShouldCalculateValuesAsync() {
+        Flux<Integer> rangeFlux = Flux.range(0,10);
+        rangeFlux
+                .flatMap(this::someSuperLongCalculation)
+                .doOnEach(value -> System.out.println(value))
+                .subscribe(consumer);
+
+        verify(consumer, times(10)).accept(any(Integer.class));
+    }
+
 
     /*
      * Flux filter()
@@ -122,5 +151,13 @@ public class ReactiveOperatorsTest {
 
         verify(consumer, timeout(1100)).accept(any(String.class));
         verify(errorConsumer, times(0)).accept(any(Exception.class));
+    }
+
+    private int someSuperFastCalculation(Integer value) {
+        return value*2;
+    }
+
+    private Flux<Integer> someSuperLongCalculation(Integer value){
+        return Flux.just(value*2);
     }
 }
