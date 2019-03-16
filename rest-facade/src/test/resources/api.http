@@ -33,7 +33,7 @@ Content-type: application/json
 }
 
 > {%
-  client.global.set("quoteId", response.body.id );
+  client.global.set("quoteId", response.body.id);
 %}
 
 ###

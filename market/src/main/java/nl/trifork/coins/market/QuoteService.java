@@ -35,7 +35,7 @@ public class QuoteService {
 
     @CommandHandler
     //Exercise 6: send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
-    public void generateQuote(GenerateQuoteCommand command) {
+    public String generateQuote(GenerateQuoteCommand command) {
         LOGGER.info("GenerateQuoteCommand {}", command);
         this.marketService
                 .retrieveSingleCoinDataWithBaseCurrency(command.getFromCurrency(), command.getToCurrency())
@@ -44,6 +44,7 @@ public class QuoteService {
                         this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), throwable))))
                 .subscribe(price ->
                         this.eventBus.publish(asEventMessage(new QuoteGeneratedEvent(command.getId(), command.getUserId(), command.getFromCurrency(), command.getToCurrency(), command.getAmount(), command.getAmount().multiply(price)))));
+        return command.getId();
     }
 
     @EventHandler
