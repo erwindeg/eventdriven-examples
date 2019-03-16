@@ -28,6 +28,9 @@ public class ReactiveOperatorsTest {
     @Mock
     Consumer errorConsumer;
 
+    /*
+    * Mono subscribe()
+    * */
     @Test
     public void subscribeShouldCallConsumer1time(){
         Mono<Integer> intMono = Mono.just(1);
@@ -36,6 +39,9 @@ public class ReactiveOperatorsTest {
         verify(consumer, times(1)).accept(any(Integer.class));
     }
 
+    /*
+     * Mono map()
+     * */
     @Test
     public void mapShouldConvertIntToString() {
         Mono<Integer> intMono = Mono.just(1);
@@ -46,37 +52,75 @@ public class ReactiveOperatorsTest {
         verify(consumer, times(1)).accept(any(String.class));
     }
 
+    /*
+     * Flux subscribe()
+     * */
     @Test
     public void subscribeShouldCallConsumer10times() {
         Flux<Integer> rangeFlux = Flux.range(0,10);
-        rangeFlux.subscribe(consumer);
+        rangeFlux
+                .doOnEach(value -> System.out.println(value))
+                .subscribe(consumer);
 
         verify(consumer, times(10)).accept(any(Integer.class));
     }
 
+    /*
+     * Flux map()
+     * */
     @Test
     public void mapShouldConvertIntsToStrings() {
         Flux<Integer> rangeFlux = Flux.range(0,10);
         rangeFlux
                 .map(item -> "Number: "+item)
+                .doOnEach(value -> System.out.println(value))
                 .subscribe(consumer);
 
         verify(consumer, times(10)).accept(any(String.class));
     }
 
-    @Test(expected = Exception.class)
-    public void timoutShouldThrowException(){
-        Flux neverFlux = Flux.never();
-        neverFlux.timeout(ofSeconds(1)).blockLast();
+    /*
+     * Flux filter()
+     * */
+    @Test
+    public void filterShouldOnlyPrintEventNumbers() {
+        Flux<Integer> rangeFlux = Flux.range(0,10);
+        rangeFlux
+                .filter(item -> item % 2 ==0)
+                .doOnEach(value -> System.out.println(value))
+                .subscribe(consumer);
+
+        verify(consumer, times(5)).accept(any(Integer.class));
     }
 
+    /*
+     * Flux timeout()
+     * */
     @Test
-    public void test(){
-        CompletableFuture cf = new CompletableFuture();
-        Mono.fromFuture(cf)
-                .flatMapMany(s -> Flux.just(s +"masoud",s +"erwin"))
-                .subscribe(r -> System.out.println(r));
+    public void timeoutShouldThrowException(){
+        Flux neverFlux = Flux.never();
+        neverFlux
+                .timeout(ofSeconds(1))
+                .subscribe(consumer,errorConsumer);
 
-        cf.complete("Hello");
+        verify(consumer, times(0)).accept(any(String.class));
+        verify(errorConsumer, timeout(1100)).accept(any(Exception.class));
+    }
+
+    /*
+     * Flux onErrorReturn
+     * */
+    @Test
+    public void timeoutShouldReturnDefaultValue(){
+        Flux neverFlux = Flux.never();
+        neverFlux
+                .timeout(ofSeconds(1))
+                .doOnEach(value -> System.out.println(value))
+                .onErrorReturn("There was a timeout")
+                .doOnEach(value -> System.out.println(value))
+                .subscribe(consumer,errorConsumer);
+
+        verify(consumer, timeout(1100)).accept(any(String.class));
+        verify(errorConsumer, times(0)).accept(any(Exception.class));
     }
 }
