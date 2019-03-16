@@ -55,7 +55,7 @@ public class LedgerAggregate {
         Map<CoinType, BigDecimal> mutatedAssets = new HashMap<>(assets);
         mutatedAssets.put(command.getFromCurrency(), fromCurrencyAmount.subtract(command.getFromAmount()));
         mutatedAssets.put(command.getToCurrency(), toCurrencyAmount.add(command.getToAmount()));
-        apply(new LedgerMutatedEvent(this.userId, mutatedAssets));
+        apply(new LedgerMutatedEvent(this.userId, command.getOrderId(), mutatedAssets));
     }
 
     @EventSourcingHandler

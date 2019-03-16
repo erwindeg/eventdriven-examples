@@ -10,6 +10,8 @@ import nl.trifork.coins.coreapi.OrderSuccessEvent;
 import org.axonframework.eventhandling.EventHandler;
 import org.axonframework.queryhandling.QueryHandler;
 import org.axonframework.queryhandling.QueryUpdateEmitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @Service
 public class OrderProjection {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(OrderProjection.class);
 
     @Autowired
     private OrderRepository orderRepository;
@@ -32,7 +36,8 @@ public class OrderProjection {
 
     @EventHandler
     public void on(OrderExecutedEvent event) {
-        Optional<OrderEntity> orderEntity = this.orderRepository.findById(event.getId());
+        LOGGER.info("OrderExecutedEvent");
+        Optional<OrderEntity> orderEntity = this.orderRepository.findById(event.getOrderId());
         orderEntity.ifPresent(order -> {
             order.setStatus(OrderStatus.PENDING);
             saveAndEmit(order);
@@ -41,6 +46,7 @@ public class OrderProjection {
 
     @EventHandler
     public void on(OrderSuccessEvent event) {
+        LOGGER.info("OrderSuccesEvent");
         Optional<OrderEntity> orderEntity = this.orderRepository.findById(event.getId());
         orderEntity.ifPresent(order -> {
             order.setStatus(OrderStatus.COMPLETED);
@@ -51,6 +57,7 @@ public class OrderProjection {
 
     @EventHandler
     public void on(OrderFailedEvent event) {
+        LOGGER.info("OrderFailedEvent");
         Optional<OrderEntity> orderEntity = this.orderRepository.findById(event.getId());
         orderEntity.ifPresent(order -> {
             order.setStatus(OrderStatus.FAILED);
