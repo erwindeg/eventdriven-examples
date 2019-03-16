@@ -45,12 +45,11 @@ public class OrderController {
         LOGGER.info("Executing order {}", orderId);
 
         Mono<String> command = defer(() -> fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))));
-        Mono<ResponseEntity<OrderDto>> query = this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class)
-                .updates()
-                .filter(order -> !order.getStatus().equals(OrderStatus.PENDING))
-                .next()
-                .timeout(ofSeconds(3))
-                .map(ResponseEntity::ok);
+        Mono<ResponseEntity<OrderDto>> query = Mono.empty(); //TODO remove this line for exercise
+        //Mono<ResponseEntity<OrderDto>> query = this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates()
+        //TODO: Uncomment the previous line and
+        // use reactive operators to return an Order which is not Pending anymore (either Completed or Failed), don't forget the timeout and error handling
+
 
         return zip(command, query, (c, q) -> q)
                 .onErrorReturn(error -> error.getCause() instanceof AxonServerRemoteCommandHandlingException, notFound().build())
