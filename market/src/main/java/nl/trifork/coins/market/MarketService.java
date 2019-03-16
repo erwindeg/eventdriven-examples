@@ -37,7 +37,7 @@ public class MarketService {
         retrieveSingleCoinData(getCoinQuery.getCoinType()).subscribe(
                 coin -> this.queryUpdateEmitter.emit(GetCoinQuery.class, query -> true, coin),
                 error -> this.queryUpdateEmitter.completeExceptionally(GetCoinQuery.class, query -> getCoinQuery.getCoinType().equals(query.getCoinType()), error));
-        return new CoinDto(null, null);
+        return new CoinDto("", BigDecimal.ZERO);
     }
 
     @QueryHandler
@@ -50,7 +50,7 @@ public class MarketService {
                         coin -> this.queryUpdateEmitter.emit(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds()), coin),
                         error -> this.queryUpdateEmitter.completeExceptionally(GetCoinsQuery.class, query -> true, error)
                 );
-        return new CoinDto(null, null);
+        return new CoinDto("", BigDecimal.ZERO);
     }
 
     //Exercise 1:

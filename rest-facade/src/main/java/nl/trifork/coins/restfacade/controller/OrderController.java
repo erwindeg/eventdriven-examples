@@ -41,10 +41,10 @@ public class OrderController {
     public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody OrderRequestDto orderRequest) {
         String orderId = orderRequest.getQuoteId() + "_order";
         LOGGER.info("Executing order {}", orderId);
-        fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))).log()
-                .onErrorReturn(status(NOT_FOUND).build()).subscribe();
+        return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))).log()
+                .onErrorReturn(status(NOT_FOUND).build()).thenMany(
 
-        return this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates()
+         this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates())
                 .doOnEach(order -> {
                     LOGGER.info("Order {}", order);
                 })

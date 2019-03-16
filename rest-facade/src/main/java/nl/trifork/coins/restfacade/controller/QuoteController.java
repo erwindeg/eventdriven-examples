@@ -22,6 +22,7 @@ import java.util.UUID;
 import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.ResponseEntity.status;
+import static reactor.core.publisher.Mono.fromFuture;
 
 @RestController
 @RequestMapping("/quote")
@@ -42,10 +43,14 @@ public class QuoteController {
         String id = UUID.randomUUID().toString();
         Flux<GetQuoteResponse> quoteResponseFlux = this.queryGateway.subscriptionQuery(new GetQuoteQuery(id), GetQuoteResponse.class, GetQuoteResponse.class).updates();
 
-        this.commandGateway.send(new GenerateQuoteCommand(id, quoteRequestDto.getUserId(), quoteRequestDto.getFromCurrency(), quoteRequestDto.getToCurrency(), quoteRequestDto.getAmount()));
-
-        return quoteResponseFlux
-                .next()
+        return fromFuture(this.commandGateway.send(
+                new GenerateQuoteCommand(id,
+                        quoteRequestDto.getUserId(),
+                        quoteRequestDto.getFromCurrency(),
+                        quoteRequestDto.getToCurrency(),
+                        quoteRequestDto.getAmount())))
+                .then(quoteResponseFlux
+                        .next())
                 .map(quoteResponse -> quoteResponse.getQuote())
                 .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))
