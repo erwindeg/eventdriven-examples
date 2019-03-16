@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Consumer;
 
@@ -67,5 +68,15 @@ public class ReactiveOperatorsTest {
     public void timoutShouldThrowException(){
         Flux neverFlux = Flux.never();
         neverFlux.timeout(ofSeconds(1)).blockLast();
+    }
+
+    @Test
+    public void test(){
+        CompletableFuture cf = new CompletableFuture();
+        Mono.fromFuture(cf)
+                .flatMapMany(s -> Flux.just(s +"masoud",s +"erwin"))
+                .subscribe(r -> System.out.println(r));
+
+        cf.complete("Hello");
     }
 }
