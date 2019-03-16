@@ -32,9 +32,10 @@ public class QuoteService {
 
     @CommandHandler
     //FIXME Exercise 6: subcribe to the result of retrieveSingleCoinDataWithBaseCurrency and the send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
-    public void generateQuote(GenerateQuoteCommand command) {
+    public String generateQuote(GenerateQuoteCommand command) {
         LOGGER.info("GenerateQuoteCommand {}", command);
         this.marketService.retrieveSingleCoinDataWithBaseCurrency(command.getFromCurrency(), command.getToCurrency());
+        return command.getId();
     }
 
     @EventHandler

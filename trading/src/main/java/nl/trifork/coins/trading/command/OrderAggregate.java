@@ -57,7 +57,7 @@ public class OrderAggregate {
 
     @CommandHandler
     //FIXME Exercise 9: validate the command and send an appropriate event or throw an exception
-    public void executeOrder(ExecuteOrderCommand command) {
+    public String executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
            //TODO: implement
         }
@@ -66,6 +66,7 @@ public class OrderAggregate {
         } else {
             //TODO: implement
         }
+        return command.getId();
     }
 
     @EventSourcingHandler
