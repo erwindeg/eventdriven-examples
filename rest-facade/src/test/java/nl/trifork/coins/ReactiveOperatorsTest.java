@@ -1,5 +1,6 @@
 package nl.trifork.coins;
 
+import org.assertj.core.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -80,7 +81,7 @@ public class ReactiveOperatorsTest {
     }
 
     /*
-     * Flux map()
+     * Flux map() with method reference
      * */
     @Test
     public void mapShouldCalculateValues() {
@@ -151,6 +152,31 @@ public class ReactiveOperatorsTest {
 
         verify(consumer, timeout(1100)).accept(any(String.class));
         verify(errorConsumer, times(0)).accept(any(Exception.class));
+    }
+
+
+    @Test
+    public void combinedOperatorsShouldMatchSuccess(){
+        Flux.just("STARTED","PENDING","SUCCESS")
+                .doOnEach(value -> System.out.println(value))
+                .filter(value -> "SUCCESS".equals(value))
+                .timeout(ofSeconds(1))
+                .next()
+                .onErrorReturn("ERROR")
+                .subscribe(consumer);
+        verify(consumer, timeout(1100)).accept(eq("SUCCESS"));
+    }
+
+    @Test
+    public void combinedOperatorsShouldMatchErrorForException(){
+        Flux.<String>generate(sink -> sink.next("STARTED")).take(5).delayElements(ofMillis(500))
+                .doOnEach(value -> System.out.println(value))
+                .filter(value -> "SUCCESS".equals(value))
+                .timeout(ofSeconds(1))
+                .next()
+                .onErrorReturn("ERROR")
+                .subscribe(consumer);
+        verify(consumer, timeout(1000)).accept(eq("ERROR"));
     }
 
     private int someSuperFastCalculation(Integer value) {
