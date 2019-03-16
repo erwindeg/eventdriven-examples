@@ -21,6 +21,7 @@ import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.ResponseEntity.notFound;
 import static org.springframework.http.ResponseEntity.status;
+import static reactor.core.publisher.Mono.*;
 import static reactor.core.publisher.Mono.fromFuture;
 import static reactor.core.publisher.Mono.zip;
 
@@ -43,7 +44,7 @@ public class OrderController {
         String orderId = orderRequest.getQuoteId() + "_order";
         LOGGER.info("Executing order {}", orderId);
 
-        Mono<String> command = fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId())));
+        Mono<String> command = defer(() -> fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))));
         Mono<ResponseEntity<OrderDto>> query = this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class)
                 .updates()
                 .filter(order -> !order.getStatus().equals(OrderStatus.PENDING))
