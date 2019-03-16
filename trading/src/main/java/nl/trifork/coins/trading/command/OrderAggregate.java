@@ -55,7 +55,7 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    public void executeOrder(ExecuteOrderCommand command) {
+    public String executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
             throw new IllegalArgumentException("Quote ID is valid not for this user");
         }
@@ -64,6 +64,7 @@ public class OrderAggregate {
         } else {
             apply(new OrderExecutedEvent(command.getId(), this.userId, this.fromCurrency, this.toCurrency, this.amount, this.price));
         }
+        return command.getId();
     }
 
     @EventSourcingHandler

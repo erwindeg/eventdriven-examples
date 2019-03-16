@@ -49,8 +49,7 @@ public class QuoteController {
                         quoteRequestDto.getFromCurrency(),
                         quoteRequestDto.getToCurrency(),
                         quoteRequestDto.getAmount())))
-                .then(quoteResponseFlux
-                        .next())
+                .then(quoteResponseFlux.next())
                 .map(quoteResponse -> quoteResponse.getQuote())
                 .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))

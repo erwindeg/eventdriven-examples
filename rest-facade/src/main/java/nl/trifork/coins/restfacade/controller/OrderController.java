@@ -19,9 +19,8 @@ import reactor.core.publisher.Mono;
 
 import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.ResponseEntity.status;
-import static reactor.core.publisher.Mono.fromFuture;
+import static reactor.core.publisher.Mono.*;
 
 @RestController
 @RequestMapping("/order")
@@ -41,10 +40,12 @@ public class OrderController {
     public Mono<ResponseEntity<OrderDto>> executeOrder(@RequestBody OrderRequestDto orderRequest) {
         String orderId = orderRequest.getQuoteId() + "_order";
         LOGGER.info("Executing order {}", orderId);
-        return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))).log()
-                .onErrorReturn(status(NOT_FOUND).build())
-                .thenMany(this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates())
-                .doOnEach(order -> LOGGER.info("Order {}", order))
+
+        return fromFuture( this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId())))
+                .doOnEach(order -> LOGGER.info("Command {}", order))
+                //.onErrorReturn(status(NOT_FOUND).build())
+                .flatMapMany(id -> this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates())
+                .doOnEach(order -> LOGGER.info("Query {}", order))
                 .filter(order -> !order.getStatus().equals(OrderStatus.PENDING))
                 .next()
                 .timeout(ofSeconds(3))
