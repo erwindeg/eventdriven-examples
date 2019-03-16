@@ -42,12 +42,9 @@ public class OrderController {
         String orderId = orderRequest.getQuoteId() + "_order";
         LOGGER.info("Executing order {}", orderId);
         return fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))).log()
-                .onErrorReturn(status(NOT_FOUND).build()).thenMany(
-
-         this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates())
-                .doOnEach(order -> {
-                    LOGGER.info("Order {}", order);
-                })
+                .onErrorReturn(status(NOT_FOUND).build())
+                .thenMany(this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class).updates())
+                .doOnEach(order -> LOGGER.info("Order {}", order))
                 .filter(order -> !order.getStatus().equals(OrderStatus.PENDING))
                 .next()
                 .timeout(ofSeconds(3))
