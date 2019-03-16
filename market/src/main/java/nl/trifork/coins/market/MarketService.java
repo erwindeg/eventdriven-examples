@@ -37,7 +37,7 @@ public class MarketService {
         retrieveSingleCoinData(getCoinQuery.getCoinType()).subscribe(
                 coin -> this.queryUpdateEmitter.emit(GetCoinQuery.class, query -> true, coin),
                 error -> this.queryUpdateEmitter.completeExceptionally(GetCoinQuery.class, query -> getCoinQuery.getCoinType().equals(query.getCoinType()), error));
-        return new CoinDto(null, null);
+        return new CoinDto("", BigDecimal.ZERO);
     }
 
     @QueryHandler
@@ -46,7 +46,7 @@ public class MarketService {
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
         retrieveMultipleCoinsData(getCoinsQuery.getIds());
-        return new CoinDto(null, null);
+        return new CoinDto("", BigDecimal.ZERO);
     }
 
     //FIXME Exercise 1: uncomment the toCoinDtoMono call and implement it

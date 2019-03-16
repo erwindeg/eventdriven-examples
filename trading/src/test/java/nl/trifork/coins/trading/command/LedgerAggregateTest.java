@@ -37,7 +37,7 @@ public class LedgerAggregateTest {
         assets.put(CoinType.EUR, new BigDecimal("9999"));
         assets.put(CoinType.BTC, new BigDecimal("10"));
         fixture.givenCommands(new CreateLedgerCommand("test"))
-                .when(new MutateLedgerCommand("test", CoinType.EUR, BigDecimal.ONE, CoinType.BTC, BigDecimal.TEN))
-                .expectEvents(new LedgerMutatedEvent("test", assets));
+                .when(new MutateLedgerCommand("test", "orderId", CoinType.EUR, BigDecimal.ONE, CoinType.BTC, BigDecimal.TEN))
+                .expectEvents(new LedgerMutatedEvent("test", "orderId", assets));
     }
 }
