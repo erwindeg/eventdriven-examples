@@ -1,8 +1,8 @@
 # Part 1: Reactive operators
 ## Exercise Mono subscribe()
 The subscribe method is not a reactive operator, it will actually execute your reactive statement.
-It is possible to pass a Consumer (or Lambda, since Consumer is an Functional interface) to the subscribe method.
-The consumer can then handle the outputs from the reactive statement. Since we subscribe to a Mono, the consumer is called 0 or 1 times.
+It is possible to pass a Consumer (or Lambda, since Consumer is a Functional interface) to the subscribe method.
+Then, the consumer can handle the outputs from the reactive statement. Since we subscribe to a Mono, the consumer is called 0 or 1 time.
 
 This example will print "Hello World!":
 ```java
@@ -13,8 +13,8 @@ Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.subsc
 
 ## Exercise Flux subscribe()
 The subscribe method is not a reactive operator, it will actually execute your reactive statement.
-It is possible to pass a Consumer (or Lambda, since Consumer is an Functional interface) to the subscribe method.
-The consumer can then handle the outputs from the reactive statement. Since we subscribe to a Flux, the consumer is called 0 or n times.
+It is possible to pass a Consumer (or Lambda, since Consumer is a Functional interface) to the subscribe method.
+Then, the consumer can handle the outputs from the reactive statement. Since we subscribe to a Flux, the consumer is called 0 or n times.
 
 This example will print "Hello World!", "Hello Mars!":
 ```java
@@ -24,7 +24,7 @@ Flux.just("Hello World!", "Hello Mars!").subscribe(value -> System.out.println(v
 Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.subscribeShouldCallConsumer10times test succeed!
 
 ## Exercise Mono map()
-The Mono map operator transforms items with a the help of a synchronous function.
+The Mono map operator transforms items with the help of a synchronous function.
 
 ![](img/mapForMono.svg)
 
@@ -36,7 +36,7 @@ Mono.just(1).map(i -> "A").subscribe(value -> System.out.println(value));
 Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.mapShouldConvertIntToString test succeed!
 
 ## Exercise Flux map()
-The Flux map operator transforms items with a the help of a synchronous function.
+The Flux map operator transforms items withthe help of a synchronous function.
 
 ![](img/mapForFlux.svg)
 
@@ -64,7 +64,7 @@ private String transformToLetters(int i){
 Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.mapShouldCalculateValues test succeed!
 
 ## Exercise Flux flatMap()
-The Flux flatMap operator transforms items with a the help of a asynchronous function.
+The Flux flatMap operator transforms items with the help of a asynchronous function.
 
 ![](img/flatMapForFlux.svg)
 
@@ -81,7 +81,7 @@ private Flux<String> transformToLetters(int i){
 Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.flatMapShouldCalculateValuesAsync test succeed!
 
 ## Exercise Flux filter()
-The Flux filter operator only items filters which match the predicate, the predicate can be implemented with a lambda function.
+The Flux filter operator filters only items that match the predicate, the predicate can be implemented with a lambda function.
 
 ![](img/filterForFlux.svg)
 
@@ -95,12 +95,12 @@ Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.filte
 
 
 ## Exercise Flux timeout()
-When no item is emitted within the given time, the timeout() operator will emit a TimeoutException
+When the is no item emitted within the given time, the timeout() operator will emit a TimeoutException.
 
 ![](img/timeoutForFlux.svg)
 
 This example will print the error message "Did not observe any item or terminal signal within 1000ms in 'source(FluxNever)' (and no fallback has been configured)", because Flux.never() never emits an item.
-Notice the second lambda function passed to subscribe. The second function will be called when there is an exception.
+Notice the second lambda function passed to subscribe. The second function will be called when an exception occurred.
 
 ```java
 Flux.never().timeout(Duration.ofSeconds(1)).subscribe(value -> System.out.println(value), error-> System.out.println(error.getMessage()));
