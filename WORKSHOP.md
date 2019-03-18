@@ -36,7 +36,7 @@ Mono.just(1).map(i -> "A").subscribe(value -> System.out.println(value));
 Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.mapShouldConvertIntToString test succeed!
 
 ## Exercise Flux map()
-The Flux map operator transforms items withthe help of a synchronous function.
+The Flux map operator transforms items with the help of a synchronous function.
 
 ![](img/mapForFlux.svg)
 
