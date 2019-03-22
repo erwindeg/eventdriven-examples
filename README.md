@@ -51,3 +51,4 @@ without tests:
 ```sh
 ./gradlew buildDockerImage
 ```
+
