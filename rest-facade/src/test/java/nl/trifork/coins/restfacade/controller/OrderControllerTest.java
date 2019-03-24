@@ -1,10 +1,7 @@
 package nl.trifork.coins.restfacade.controller;
 
 
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIGlobalBinding;
 import io.axoniq.axonserver.grpc.ErrorMessage;
-import nl.trifork.coins.coreapi.CoinDto;
-import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetOrderQuery;
 import nl.trifork.coins.coreapi.OrderDto;
 import nl.trifork.coins.coreapi.OrderRequestDto;
@@ -34,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static reactor.core.publisher.Flux.*;
+import static reactor.core.publisher.Flux.just;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderControllerTest {
