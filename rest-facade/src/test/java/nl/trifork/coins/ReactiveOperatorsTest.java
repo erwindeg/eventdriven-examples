@@ -164,7 +164,7 @@ public class ReactiveOperatorsTest {
                 .next()
                 .onErrorReturn("ERROR")
                 .subscribe(consumer);
-        verify(consumer, timeout(1100)).accept(eq("SUCCESS"));
+        verify(consumer, timeout(1200)).accept(eq("SUCCESS"));
     }
 
     @Test

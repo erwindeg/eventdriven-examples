@@ -1,10 +1,7 @@
 package nl.trifork.coins.restfacade.controller;
 
 
-import com.sun.tools.internal.xjc.reader.xmlschema.bindinfo.BIGlobalBinding;
 import io.axoniq.axonserver.grpc.ErrorMessage;
-import nl.trifork.coins.coreapi.CoinDto;
-import nl.trifork.coins.coreapi.GetCoinQuery;
 import nl.trifork.coins.coreapi.GetOrderQuery;
 import nl.trifork.coins.coreapi.OrderDto;
 import nl.trifork.coins.coreapi.OrderRequestDto;
@@ -34,7 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static reactor.core.publisher.Flux.*;
+import static reactor.core.publisher.Flux.just;
 
 @RunWith(MockitoJUnitRunner.class)
 public class OrderControllerTest {
@@ -51,24 +48,24 @@ public class OrderControllerTest {
     public void shouldReturnSuccessfulOrder() {
         SubscriptionQueryResult queryResultMock = mock(SubscriptionQueryResult.class);
         when(commandGateway.send(any())).thenReturn(CompletableFuture.completedFuture("orderId"));
-        when(queryGateway.subscriptionQuery(any(GetOrderQuery.class),eq(OrderDto.class),eq(OrderDto.class)))
+        when(queryGateway.subscriptionQuery(any(GetOrderQuery.class), eq(OrderDto.class), eq(OrderDto.class)))
                 .thenReturn(queryResultMock);
         when(queryResultMock.updates())
                 .thenReturn(just(
-                        new OrderDto("orderId",CoinType.EUR,CoinType.BTC, BigDecimal.ONE,BigDecimal.TEN, OrderStatus.PENDING),
-                        new OrderDto("orderId",CoinType.EUR,CoinType.BTC, BigDecimal.ONE,BigDecimal.TEN, OrderStatus.COMPLETED)
-                        ));
+                        new OrderDto("orderId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN, OrderStatus.PENDING),
+                        new OrderDto("orderId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN, OrderStatus.COMPLETED)
+                ));
         ResponseEntity<OrderDto> orderResponse = this.orderControllerController.executeOrder(new OrderRequestDto("userId", "quoteId")).block();
         assertNotNull(orderResponse);
         assertEquals(orderResponse.getStatusCode(), HttpStatus.OK);
-        assertEquals(OrderStatus.COMPLETED,orderResponse.getBody().getStatus());
+        assertEquals(OrderStatus.COMPLETED, orderResponse.getBody().getStatus());
     }
 
     @Test
     public void shouldReturnNotFoundForNonExistingOrder() {
         SubscriptionQueryResult queryResultMock = mock(SubscriptionQueryResult.class);
         when(commandGateway.send(any())).thenReturn(Mono.error(new CompletionException(new AxonServerRemoteCommandHandlingException("", ErrorMessage.getDefaultInstance()))).toFuture());
-        when(queryGateway.subscriptionQuery(any(GetOrderQuery.class),eq(OrderDto.class),eq(OrderDto.class)))
+        when(queryGateway.subscriptionQuery(any(GetOrderQuery.class), eq(OrderDto.class), eq(OrderDto.class)))
                 .thenReturn(queryResultMock);
         when(queryResultMock.updates())
                 .thenReturn(Flux.never());
@@ -81,7 +78,7 @@ public class OrderControllerTest {
     public void shouldReturnInternalServerErrorForTimeoutException() {
         SubscriptionQueryResult queryResultMock = mock(SubscriptionQueryResult.class);
         when(commandGateway.send(any())).thenReturn(CompletableFuture.completedFuture("orderId"));
-        when(queryGateway.subscriptionQuery(any(GetOrderQuery.class),eq(OrderDto.class),eq(OrderDto.class)))
+        when(queryGateway.subscriptionQuery(any(GetOrderQuery.class), eq(OrderDto.class), eq(OrderDto.class)))
                 .thenReturn(queryResultMock);
         when(queryResultMock.updates())
                 .thenReturn(Flux.never());
