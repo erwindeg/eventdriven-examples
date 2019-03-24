@@ -150,7 +150,7 @@ public class ReactiveOperatorsTest {
                 .doOnEach(value -> System.out.println(value))
                 .subscribe(consumer,errorConsumer);
 
-        verify(consumer, timeout(1100)).accept(any(String.class));
+        verify(consumer, timeout(1200)).accept(any(String.class));
         verify(errorConsumer, times(0)).accept(any(Exception.class));
     }
 
@@ -164,7 +164,7 @@ public class ReactiveOperatorsTest {
                 .next()
                 .onErrorReturn("ERROR")
                 .subscribe(consumer);
-        verify(consumer, timeout(1200)).accept(eq("SUCCESS"));
+        verify(consumer, timeout(1500)).accept(eq("SUCCESS"));
     }
 
     @Test
@@ -176,7 +176,7 @@ public class ReactiveOperatorsTest {
                 .next()
                 .onErrorReturn("ERROR")
                 .subscribe(consumer);
-        verify(consumer, timeout(1000)).accept(eq("ERROR"));
+        verify(consumer, timeout(1500)).accept(eq("ERROR"));
     }
 
     private int someSuperFastCalculation(Integer value) {

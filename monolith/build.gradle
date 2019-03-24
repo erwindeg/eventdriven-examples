@@ -6,8 +6,8 @@ sourceCompatibility = javaSource
 targetCompatibility = javaTarget
 
 dependencies {
-    compile project(':market')
     compile project(':trading')
+    compile project(':market')
     compile project(':rest-facade')
     compile libraries.springBoot
 }
