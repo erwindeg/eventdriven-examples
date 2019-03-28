@@ -126,7 +126,7 @@ Now try this yourself by making the nl.trifork.coins.ReactiveOperatorsTest.timeo
 # Part 2: Applying reactive programming
 Now that you know several reactive programming operators, it is time to apply them to our CQRS/ES context.
 
-This example with print "SUCCESS:
+This example with print "SUCCESS":
 ```java
  Flux.just("STARTED","PENDING","SUCCESS")
                 .doOnEach(value -> System.out.println(value))
