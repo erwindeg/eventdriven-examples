@@ -7,7 +7,7 @@ GET http://localhost:8080/market/BTC
 ###
 
 POST http://localhost:8080/user
-Accept: application/jsont
+Accept: application/json
 Content-type: application/json
 
 {
