@@ -47,6 +47,7 @@ public class OrderController {
         Mono<String> command = defer(() -> fromFuture(this.commandGateway.send(new ExecuteOrderCommand(orderId, orderRequest.getUserId()))));
         Mono<ResponseEntity<OrderDto>> query = this.queryGateway.subscriptionQuery(new GetOrderQuery(orderId), OrderDto.class, OrderDto.class)
                 .updates()
+                .doOnEach(order -> System.out.println(order))
                 .filter(order -> !order.getStatus().equals(OrderStatus.PENDING))
                 .next()
                 .timeout(ofSeconds(3))
