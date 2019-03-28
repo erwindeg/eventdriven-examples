@@ -13,11 +13,6 @@ Run the main class  of the `monolith` module in your IDE.
 |:-----------|:---------------------------------|:-------------------------------------------------------------|
 | `monolith` | `nl.trifork.coins.monolith.Main` | `monolith/src/main/java/nl/trifork/coins/monolith/Main.java` |
 
-Alternatively you could build a jar and run it from the command line:
-```sh
-./gradlew clean build jar
-java -jar monolith/build/libs/monolith.jar 
-```
 
 ## Run app as microservices
 Run the main class of each of the modules individually:
@@ -51,3 +46,4 @@ without tests:
 ```sh
 ./gradlew buildDockerImage
 ```
+
