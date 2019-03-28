@@ -1,5 +1,6 @@
 package nl.trifork.coins;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -11,8 +12,10 @@ import java.util.function.Consumer;
 
 import static java.time.Duration.ofMillis;
 import static java.time.Duration.ofSeconds;
+import static org.mockito.AdditionalAnswers.delegatesTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -20,11 +23,16 @@ import static org.mockito.Mockito.verify;
 @RunWith(MockitoJUnitRunner.class)
 public class ReactiveOperatorsTest {
 
-    @Mock
     Consumer consumer;
 
     @Mock
     Consumer errorConsumer;
+
+
+    @Before
+    public void setup() {
+        this.consumer = spyLambda(System.out::println);
+    }
 
     /*
      * Mono subscribe()
@@ -55,7 +63,7 @@ public class ReactiveOperatorsTest {
     @Test
     public void mapShouldConvertIntToString() {
         Mono<Integer> intMono = Mono.just(1);
-        //TODO: which operator? don't forget to subscribe!
+        //TODO: which operator? Don't forget to subscribe!
 
         verify(consumer, times(1)).accept(any(String.class));
     }
@@ -67,7 +75,7 @@ public class ReactiveOperatorsTest {
     @Test
     public void mapShouldConvertIntsToStrings() {
         Flux<Integer> rangeFlux = Flux.range(0, 10);
-        //TODO: which operator? don't forget to subscribe!
+        //TODO: which operator? Don't forget to subscribe!
 
         verify(consumer, times(10)).accept(any(String.class));
     }
@@ -101,7 +109,7 @@ public class ReactiveOperatorsTest {
     @Test
     public void filterShouldOnlyPrintEventNumbers() {
         Flux<Integer> rangeFlux = Flux.range(0, 10);
-        //TODO: which operator? don't forget to subscribe!
+        //TODO: which operator? Don't forget to subscribe!
 
         verify(consumer, times(5)).accept(any(Integer.class));
     }
@@ -112,7 +120,7 @@ public class ReactiveOperatorsTest {
     @Test
     public void timeoutShouldThrowException() {
         Flux neverFlux = Flux.never();
-        //TODO: which operator? don't forget to subscribe!
+        //TODO: which operator? Don't forget to subscribe!
 
         verify(consumer, times(0)).accept(any(String.class));
         verify(errorConsumer, timeout(1100)).accept(any(Exception.class));
@@ -125,35 +133,32 @@ public class ReactiveOperatorsTest {
     public void timeoutShouldReturnDefaultValue() {
         Flux neverFlux = Flux.never();
 //        neverFlux.timeout(ofSeconds(1)) //uncomment
-        //TODO: which operator? don't forget to subscribe!
+        //TODO: which operator? Don't forget to subscribe!
 
-        verify(consumer, timeout(1100)).accept(any(String.class));
+        verify(consumer, timeout(1200)).accept(any(String.class));
         verify(errorConsumer, times(0)).accept(any(Exception.class));
     }
-
 
     @Test
     public void combinedOperatorsShouldMatchSuccess() {
         Flux.just("STARTED", "PENDING", "SUCCESS")
-                .doOnEach(value -> System.out.println(value))
                 .filter(value -> "SUCCESS".equals(value))
                 .timeout(ofSeconds(1))
                 .next()
                 .onErrorReturn("ERROR")
                 .subscribe(consumer);
-        verify(consumer, timeout(1200)).accept(eq("SUCCESS"));
+        verify(consumer, timeout(1500)).accept(eq("SUCCESS"));
     }
 
     @Test
     public void combinedOperatorsShouldMatchErrorForException() {
         Flux.<String>generate(sink -> sink.next("STARTED")).take(5).delayElements(ofMillis(500))
-                .doOnEach(value -> System.out.println(value))
                 .filter(value -> "SUCCESS".equals(value))
                 .timeout(ofSeconds(1))
                 .next()
                 .onErrorReturn("ERROR")
                 .subscribe(consumer);
-        verify(consumer, timeout(1000)).accept(eq("ERROR"));
+        verify(consumer, timeout(1500)).accept(eq("ERROR"));
     }
 
     private int someSuperFastCalculation(Integer value) {
@@ -162,5 +167,9 @@ public class ReactiveOperatorsTest {
 
     private Flux<Integer> someSuperLongCalculation(Integer value) {
         return Flux.just(value * 2);
+    }
+
+    private Consumer spyLambda(final Consumer lambda) {
+        return mock(Consumer.class, delegatesTo(lambda));
     }
 }
