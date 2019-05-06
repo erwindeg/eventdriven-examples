@@ -12,6 +12,6 @@ What are we building?
 
 
 ## Questions:
-- Do we do an exercise and then discuss it or presentation and then all excercises?
+- Do we do an exercise and then discuss it or presentation and then all exercises?
 
 
