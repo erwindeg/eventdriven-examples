@@ -29,7 +29,7 @@ Content-type: application/json
   "userId": "user2",
   "fromCurrency": "EUR",
   "toCurrency": "BTC",
-  "amount": "0.01"
+  "amount": "0.001"
 }
 
 > {%
