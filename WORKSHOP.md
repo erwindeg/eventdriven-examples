@@ -1,4 +1,6 @@
 # Part 1: Reactive operators
+All exercises for part 1 can be found in nl.trifork.coins.ReactiveOperatorsTest.
+
 ## Exercise Mono subscribe()
 The subscribe method is not a reactive operator, it will actually execute your reactive statement.
 It is possible to pass a Consumer (or Lambda, since Consumer is a Functional interface) to the subscribe method.

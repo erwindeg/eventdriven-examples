@@ -45,7 +45,6 @@ public class ReactiveOperatorsTest {
         verify(consumer, times(1)).accept(any(Integer.class));
     }
 
-
     /*
      * Flux subscribe()
      * */
@@ -67,7 +66,6 @@ public class ReactiveOperatorsTest {
 
         verify(consumer, times(1)).accept(any(String.class));
     }
-
 
     /*
      * Flux map()
@@ -101,7 +99,6 @@ public class ReactiveOperatorsTest {
 
         verify(consumer, times(10)).accept(any(Integer.class));
     }
-
 
     /*
      * Flux filter()
