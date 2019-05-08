@@ -7,6 +7,7 @@ import nl.trifork.coins.coreapi.GetQuoteQuery;
 import nl.trifork.coins.coreapi.GetQuoteResponse;
 import nl.trifork.coins.coreapi.QuoteDto;
 import nl.trifork.coins.coreapi.QuoteGeneratedEvent;
+import nl.trifork.model.CoinType;
 import org.axonframework.commandhandling.CommandHandler;
 import org.axonframework.eventhandling.EventBus;
 import org.axonframework.eventhandling.EventHandler;
@@ -15,7 +16,10 @@ import org.axonframework.queryhandling.QueryUpdateEmitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 import static org.axonframework.eventhandling.GenericEventMessage.asEventMessage;
 
@@ -47,10 +51,17 @@ public class QuoteService {
         return command.getId();
     }
 
+    @Scheduled(fixedDelay = 1000)
+    public void emitter(){
+        System.out.println("Emitting");
+        this.queryUpdateEmitter.emit(GetQuoteQuery.class, query -> true, new GetQuoteResponse(new QuoteDto("erwin", CoinType.BTC,CoinType.EUR, BigDecimal.ONE,BigDecimal.ONE)));
+        this.queryUpdateEmitter.complete(GetQuoteQuery.class,query -> true);
+    }
+
     @EventHandler
     public void on(QuoteGeneratedEvent event) {
         LOGGER.info("QuoteGeneratedEvent {}", event);
-        queryUpdateEmitter.emit(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), new GetQuoteResponse(new QuoteDto(event.getId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice())));
+       // queryUpdateEmitter.emit(GetQuoteQuery.class, query -> query.getId().equals(event.getId()), new GetQuoteResponse(new QuoteDto(event.getId(), event.getFromCurrency(), event.getToCurrency(), event.getAmount(), event.getPrice())));
     }
 
     @EventHandler

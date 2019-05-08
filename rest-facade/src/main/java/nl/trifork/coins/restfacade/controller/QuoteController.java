@@ -18,11 +18,11 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import static java.time.Duration.ofSeconds;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.ResponseEntity.status;
-import static reactor.core.publisher.Mono.fromFuture;
 
 @RestController
 @RequestMapping("/quote")
@@ -39,20 +39,22 @@ public class QuoteController {
     }
 
     @PostMapping
-    public Mono<ResponseEntity<QuoteDto>> generateQuote(@RequestBody QuoteRequestDto quoteRequestDto) {
+    public CompletableFuture<ResponseEntity<QuoteDto>> generateQuote(@RequestBody QuoteRequestDto quoteRequestDto) {
         String id = UUID.randomUUID().toString();
-        Flux<GetQuoteResponse> quoteResponseFlux = this.queryGateway.subscriptionQuery(new GetQuoteQuery(id), GetQuoteResponse.class, GetQuoteResponse.class).updates();
+        Flux<GetQuoteResponse> quoteResponseFlux = this.queryGateway.subscriptionQuery(new GetQuoteQuery(id), GetQuoteResponse.class, GetQuoteResponse.class).updates().doOnNext(i -> System.out.println("Masoud:" + i));
 
-        return fromFuture(this.commandGateway.send(
+        this.commandGateway.send(
                 new GenerateQuoteCommand(id,
                         quoteRequestDto.getUserId(),
                         quoteRequestDto.getFromCurrency(),
                         quoteRequestDto.getToCurrency(),
-                        quoteRequestDto.getAmount())))
-                .then(quoteResponseFlux.next())
+                        quoteRequestDto.getAmount()));
+
+        return quoteResponseFlux
+                .next()
                 .map(quoteResponse -> quoteResponse.getQuote())
                 .map(ResponseEntity::ok)
                 .timeout(ofSeconds(3))
-                .onErrorReturn(status(INTERNAL_SERVER_ERROR).build());
+                .onErrorReturn(status(INTERNAL_SERVER_ERROR).build()).toFuture();
     }
 }
