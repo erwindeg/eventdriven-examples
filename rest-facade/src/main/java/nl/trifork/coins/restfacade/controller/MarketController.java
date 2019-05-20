@@ -57,7 +57,7 @@ public class MarketController {
         query.initialResult().subscribe();
         Flux<CoinDto> updates = query.updates();
 
-        //retrieve the first emitted value by using next(), this turns the Flux into a Mono
+        //retrieve all elements emitted by using collectList(), this turns the Flux into a Mono with the list containing all elements
         //specify a timeout of 3 seconds, to  make sure this method doesn't wait forever when no data is emitted
         //when the timeout expires, an exception is thrown.
         //use a map to return a ResponseEntity, use onErrorReturn to return 404 not found in case of an error.
