@@ -71,7 +71,7 @@ public class OrderControllerTest {
                 .thenReturn(Flux.never());
         ResponseEntity<OrderDto> orderResponse = this.orderControllerController.executeOrder(new OrderRequestDto("userId", "quoteId")).block();
         assertNotNull(orderResponse);
-        assertEquals(orderResponse.getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(HttpStatus.NOT_FOUND, orderResponse.getStatusCode());
     }
 
     @Test
@@ -84,6 +84,6 @@ public class OrderControllerTest {
                 .thenReturn(Flux.never());
         ResponseEntity<OrderDto> orderResponse = this.orderControllerController.executeOrder(new OrderRequestDto("userId", "quoteId")).block();
         assertNotNull(orderResponse);
-        assertEquals(orderResponse.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, orderResponse.getStatusCode());
     }
 }
