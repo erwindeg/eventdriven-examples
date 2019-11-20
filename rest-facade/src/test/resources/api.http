@@ -2,7 +2,7 @@ GET http://localhost:8080/market
 
 ###
 
-GET http://localhost:8080/market/1
+GET http://localhost:8080/market/BTC
 
 ###
 
@@ -29,7 +29,7 @@ Content-type: application/json
   "userId": "user2",
   "fromCurrency": "EUR",
   "toCurrency": "BTC",
-  "amount": "0.01"
+  "amount": "0.001"
 }
 
 > {%

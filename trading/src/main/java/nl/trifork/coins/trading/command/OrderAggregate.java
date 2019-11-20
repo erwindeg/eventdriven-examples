@@ -39,8 +39,9 @@ public class OrderAggregate {
     }
 
     @CommandHandler
+    //FIXME Exercise 8: send an event for this command to provide state for this aggregate through event sourcing
     public OrderAggregate(CreateOrderCommand command) {
-        apply(new OrderCreatedEvent(command.getId(), command.getUserId(), command.getFromCurrency(), command.getToCurrency(), command.getAmount(), command.getPrice()));
+
     }
 
     @EventSourcingHandler
@@ -55,17 +56,17 @@ public class OrderAggregate {
     }
 
     @CommandHandler
-    public void executeOrder(ExecuteOrderCommand command) {
+    //FIXME Exercise 9: validate the command and send an appropriate event or throw an exception
+    public String executeOrder(ExecuteOrderCommand command) {
         if (!command.getUserId().equals(this.userId)) {
-            throw new IllegalArgumentException("Quote ID is valid not for this user");
+           //TODO: implement
         }
-        //TODO fix tests for this case
-//        if (!this.status.equals(PENDING)) {
-//            throw new IllegalArgumentException("The status of this order is not valid");
-//        }
-        else {
-            apply(new OrderExecutedEvent(command.getId(), this.userId, this.fromCurrency, this.toCurrency, this.amount, this.price));
+        if (!this.status.equals(CREATED)) {
+            //TODO: implement
+        } else {
+            //TODO: implement
         }
+        return command.getId();
     }
 
     @EventSourcingHandler
@@ -74,8 +75,13 @@ public class OrderAggregate {
     }
 
     @CommandHandler
+    //FIXME Exercise 10: validate the command and send an appropriate event or throw an exception
     public void success(SuccessOrderCommand command) {
-        apply(new OrderSuccessEvent(command.getId()));
+        if (!this.status.equals(PENDING)) {
+           //TODO: implement
+        } else {
+            //TODO: implement
+        }
     }
 
     @EventSourcingHandler
@@ -85,7 +91,11 @@ public class OrderAggregate {
 
     @CommandHandler
     public void fail(FailOrderCommand command) {
-        apply(new OrderFailedEvent(command.getId()));
+        if (!this.status.equals(PENDING)) {
+            throw new IllegalStateException("The status of this order is not valid");
+        } else {
+            apply(new OrderFailedEvent(command.getId()));
+        }
     }
 
     @EventSourcingHandler

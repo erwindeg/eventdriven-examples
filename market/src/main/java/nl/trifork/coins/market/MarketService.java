@@ -13,7 +13,10 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class MarketService {
@@ -34,27 +37,22 @@ public class MarketService {
         retrieveSingleCoinData(getCoinQuery.getCoinType()).subscribe(
                 coin -> this.queryUpdateEmitter.emit(GetCoinQuery.class, query -> true, coin),
                 error -> this.queryUpdateEmitter.completeExceptionally(GetCoinQuery.class, query -> getCoinQuery.getCoinType().equals(query.getCoinType()), error));
-        return new CoinDto(null, null);
+        return new CoinDto("", BigDecimal.ZERO);
     }
 
     @QueryHandler
-    //FIXME Exercise 4: add the doOnComplete
+    //FIXME Exercise 4: Subscribe to the Flux and emit each item using the queryUpdateEmitter. Don't forget to handle the exceptions. Additionally we should signal when we
+    //are done emitting items.
     public CoinDto queryAll(GetCoinsQuery getCoinsQuery) {
         LOGGER.info("GetCoinsQuery {}", getCoinsQuery.getIds());
-        retrieveMultipleCoinsData(getCoinsQuery.getIds())
-                .doOnComplete(() -> this.queryUpdateEmitter.complete(GetCoinsQuery.class, query -> true))
-                .subscribe(
-                        coin -> this.queryUpdateEmitter.emit(GetCoinsQuery.class, query -> getCoinsQuery.getIds().equals(query.getIds()), coin),
-                        error -> this.queryUpdateEmitter.completeExceptionally(GetCoinsQuery.class, query -> true, error)
-                );
-        return new CoinDto(null, null);
+        retrieveMultipleCoinsData(getCoinsQuery.getIds());
+        return new CoinDto("", BigDecimal.ZERO);
     }
 
     //FIXME Exercise 1: uncomment the toCoinDtoMono call and implement it
     //Hints: You need to map the response
     public Mono<CoinDto> retrieveSingleCoinData(CoinType coinType) {
-        return Mono.empty();
-//        return toCoinDtoMono(coinRankingClient.getCoinInformation(coinType));
+        return toCoinDtoMono(coinRankingClient.getCoinInformation(coinType));
     }
 
     public Mono<CoinDto> retrieveSingleCoinDataWithBaseCurrency(CoinType fromCurrency, CoinType toCurrency) {
@@ -68,6 +66,13 @@ public class MarketService {
     }
 
     private Mono<CoinDto> toCoinDtoMono(Mono<ClientResponse> coinInfo) {
+        //return coinInfo.flatMap(response -> response.bodyToMono(HashMap.class));
         return Mono.empty();
+    }
+
+    private CoinDto parseResponseBody(HashMap result) {
+        Map data = (Map) result.get("data");
+        Map coinData = (Map)data.get("coin");
+        return new CoinDto((String) coinData.get("symbol"), new BigDecimal((String) coinData.get("price")));
     }
 }

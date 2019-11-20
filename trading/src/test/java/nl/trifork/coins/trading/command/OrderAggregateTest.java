@@ -15,6 +15,7 @@ import org.junit.Test;
 
 import java.math.BigDecimal;
 
+//These tests should succeed to finish the OrderAggregate exercises
 public class OrderAggregateTest {
 
     private AggregateTestFixture<OrderAggregate> fixture;
@@ -39,11 +40,37 @@ public class OrderAggregateTest {
     }
 
     @Test
+    public void excutingAlreadyExecutedOrderShouldFail() {
+        fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN),
+                new ExecuteOrderCommand("orderId", "userId"))
+                .when(new ExecuteOrderCommand("orderId", "userId"))
+                .expectException(IllegalStateException.class);
+    }
+
+    @Test
     public void successOrder() {
         fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN),
                 new ExecuteOrderCommand("orderId", "userId"))
                 .when(new SuccessOrderCommand("orderId"))
                 .expectEvents(new OrderSuccessEvent("orderId"));
+    }
+
+    @Test
+    public void succesAlreadyFailedOrderShouldFail() {
+        fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN),
+                new ExecuteOrderCommand("orderId", "userId"),
+                new FailOrderCommand("orderId"))
+                .when(new SuccessOrderCommand("orderId"))
+                .expectException(IllegalStateException.class);
+    }
+
+    @Test
+    public void failingAlreadySuccessfulOrderShouldFail() {
+        fixture.givenCommands(new CreateOrderCommand("orderId", "userId", CoinType.EUR, CoinType.BTC, BigDecimal.ONE, BigDecimal.TEN),
+                new ExecuteOrderCommand("orderId", "userId"),
+                new SuccessOrderCommand("orderId"))
+                .when(new FailOrderCommand("orderId"))
+                .expectException(IllegalStateException.class);
     }
 
     @Test

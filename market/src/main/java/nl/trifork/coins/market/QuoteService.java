@@ -1,6 +1,5 @@
 package nl.trifork.coins.market;
 
-import nl.trifork.coins.coreapi.CoinDto;
 import nl.trifork.coins.coreapi.GenerateQuoteCommand;
 import nl.trifork.coins.coreapi.GenerateQuoteFailedEvent;
 import nl.trifork.coins.coreapi.GetQuoteQuery;
@@ -17,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import static org.axonframework.eventhandling.GenericEventMessage.asEventMessage;
-
 @Service
 public class QuoteService {
 
@@ -34,16 +31,11 @@ public class QuoteService {
     QueryUpdateEmitter queryUpdateEmitter;
 
     @CommandHandler
-    //FIXME Exercise 6: send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
-    public void generateQuote(GenerateQuoteCommand command) {
+    //FIXME Exercise 6: subcribe to the result of retrieveSingleCoinDataWithBaseCurrency and the send a QuoteGeneratedEvent on success and a GenerateQuoteFailedEvent on error.
+    public String generateQuote(GenerateQuoteCommand command) {
         LOGGER.info("GenerateQuoteCommand {}", command);
-        this.marketService
-                .retrieveSingleCoinDataWithBaseCurrency(command.getFromCurrency(), command.getToCurrency())
-                .map(CoinDto::getPrice)
-                .doOnError(throwable ->
-                        this.eventBus.publish(asEventMessage(new GenerateQuoteFailedEvent(command.getId(), throwable))))
-                .subscribe(price ->
-                        this.eventBus.publish(asEventMessage(new QuoteGeneratedEvent(command.getId(), command.getUserId(), command.getFromCurrency(), command.getToCurrency(), command.getAmount(), command.getAmount().multiply(price)))));
+        this.marketService.retrieveSingleCoinDataWithBaseCurrency(command.getFromCurrency(), command.getToCurrency());
+        return command.getId();
     }
 
     @EventHandler
