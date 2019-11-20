@@ -10,7 +10,7 @@ services:
       - axonnet
       - default
     volumes:
-      - ./temp:/opt/axonserver/data
+      - ./temp/axondata:/opt/axonserver/data
 
 networks:
   axonnet:

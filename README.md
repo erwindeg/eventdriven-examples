@@ -51,3 +51,8 @@ without tests:
 ```sh
 ./gradlew buildDockerImage
 ```
+
+## Load docker image from USB stick
+```sh
+docker image load -i axonserver.tar
+```
