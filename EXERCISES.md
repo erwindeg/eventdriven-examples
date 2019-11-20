@@ -1,15 +1,3 @@
-# Querying external system (Async, query update emitter), retry
-# timeout, retry, switchMap / switchIfEmpty / switchOnFirst
-# onErrorReturn
-# doOnXXX
-# future to mono, optional to mono
-# Aggregate & Unittest
-# Command / Event
-
-
-Users shouldn't have to make modules, only code + tests
-
-
 # Market exercises
 ## Exercise 1
 nl.trifork.coins.market.MarketService.retrieveMarketData
