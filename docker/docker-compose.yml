@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   axonserver:
-    image: axoniq/axonserver
+    image: eu.gcr.io/tradingengine-194513/blox-infra/axonserver:4.1.8.0
     container_name: axon-server
     ports:
       - 8024:8024
@@ -9,6 +9,8 @@ services:
     networks:
       - axonnet
       - default
+    environment:
+      - INIT_CLUSTER=true
     volumes:
       - ./temp/axondata:/opt/axonserver/data
 

@@ -17,14 +17,14 @@ subprojects { subProject ->
 
     ext {
         assertjVersion = '3.9.0'
-        axonServerVersion = '4.0.3'
-        axonVersion = '4.0.3'
+        axonServerVersion = '4.1.2'
+        axonVersion = '4.1.2'
         dockerVersion = '3.2.3'
         jacksonKotlinVersion = '2.9.6'
         javaSource = '1.8'
         javaTarget = '1.8'
         junitVersion = '5.3.2'
-        kotlinVersion = '1.2.31'
+        kotlinVersion = '1.3.72'
         springBootVersion = '2.1.4.RELEASE'
         jaxbVersion = '2.2.11'
         wiremockVersion = '2.17.0'
